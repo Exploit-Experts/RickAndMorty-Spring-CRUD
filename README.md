@@ -14,9 +14,8 @@ Criar uma API RESTful com operações CRUD que permita consumir e gerenciar dado
 
 <div align="center">
 
-| <img src="https://avatars.githubusercontent.com/u/114788642?v=4" width="40px" height="40px"/> [Bruno Magno](https://github.com/brunoliratm) | <img src="https://avatars.githubusercontent.com/u/127964717?v=4" width="40px" height="40px"/> [Paulo de Araujo](https://github.com/Paulo-Araujo-Jr) | <img src="https://avatars.githubusercontent.com/u/126338859?v=4" width="40px" height="40px"/> [Marcelo Mesquita](https://github.com/MrMesquita) |
-
-| <img src="https://avatars.githubusercontent.com/u/126990110?v=4" width="40px" height="40px"/> [Jonathan Rocha](https://github.com/Jonathanwsr) | <img src="https://avatars.githubusercontent.com/u/180599406?v=4" width="40px" height="40px"/> [Klismans Nazário](https://github.com/Klismans-Nazario) | <img src="https://avatars.githubusercontent.com/u/126925371?v=4" width="40px" height="40px"/> [Leandro Oliveira](https://github.com/leandrouser) |
+| <img src="https://avatars.githubusercontent.com/u/114788642?v=4" width="40px" height="40px"/> [Bruno Magno](https://github.com/brunoliratm) | <img src="https://avatars.githubusercontent.com/u/127964717?v=4" width="40px" height="40px"/> [Paulo de Araujo](https://github.com/Paulo-Araujo-Jr) | <img src="https://avatars.githubusercontent.com/u/126338859?v=4" width="40px" height="40px"/> [Marcelo Mesquita](https://github.com/MrMesquita) | <img src="https://avatars.githubusercontent.com/u/126990110?v=4" width="40px" height="40px"/> [Jonathan Rocha](https://github.com/Jonathanwsr) | <img src="https://avatars.githubusercontent.com/u/180599406?v=4" width="40px" height="40px"/> [Klismans Nazário](https://github.com/Klismans-Nazario) | <img src="https://avatars.githubusercontent.com/u/126925371?v=4" width="40px" height="40px"/> [Leandro Oliveira](https://github.com/leandrouser) |
+| --- | --- | --- | --- | --- | --- |
 
 </div>
 
