@@ -1,24 +1,33 @@
+ <div align="center" text-align="center">
+    <img src="https://capsule-render.vercel.app/api?type=waving&height=200&color=gradient&text=RickAndMorty%20API&reversal=false">
+</div>
+
 # 🚀Rick and Morty Spring CRUD API
 
-Este repositório contém a implementação da API RESTful que consome dados da série Rick and Morty. A API foi desenvolvida com Java e Spring Boot e fornece operações CRUD para gerenciar e listar personagens da série.
+RickAndMorty-Spring-API é um backend desenvolvido com Java e Spring Boot que implementa uma API RESTful para gerenciar e listar dados dos personagens da série Rick and Morty. O projeto inclui operações CRUD (Criar, Ler, Atualizar e Excluir) e está preparado para ser consumido por um front-end separado. Este serviço fornece uma base robusta para integrar com qualquer interface cliente que consuma dados de personagens por meio de endpoints.
 
----
+</br>
 
 ## 🎯 Objetivo
 
 Criar uma API RESTful com operações CRUD que permita consumir e gerenciar dados de personagens da série Rick and Morty, além de fornecer endpoints para serem utilizados no front-end Angular.
 
----
+</br>
 
 ## :zombie:Credits
 
-<div align="center">
 
-| <img src="https://avatars.githubusercontent.com/u/114788642?v=4" width="40px" height="40px"/> [Bruno Magno](https://github.com/brunoliratm) | <img src="https://avatars.githubusercontent.com/u/127964717?v=4" width="40px" height="40px"/> [Paulo de Araujo](https://github.com/Paulo-Araujo-Jr) | <img src="https://avatars.githubusercontent.com/u/126338859?v=4" width="40px" height="40px"/> [Marcelo Mesquita](https://github.com/MrMesquita) | <img src="https://avatars.githubusercontent.com/u/126990110?v=4" width="40px" height="40px"/> [Jonathan Rocha](https://github.com/Jonathanwsr) | <img src="https://avatars.githubusercontent.com/u/180599406?v=4" width="40px" height="40px"/> [Klismans Nazário](https://github.com/Klismans-Nazario) | <img src="https://avatars.githubusercontent.com/u/126925371?v=4" width="40px" height="40px"/> [Leandro Oliveira](https://github.com/leandrouser) |
-| --- | --- | --- | --- | --- | --- |
+||           |
+| ---------------- | ---------------- |
+| <img src="https://avatars.githubusercontent.com/u/114788642?v=4" float="left" width="40px" height=40px> | <a href='https://github.com/brunoliratm'>Bruno Magno</a> |
+| <img src="https://avatars.githubusercontent.com/u/127964717?v=4" float="left" width="40px" height=40px> | <a href='https://github.com/Paulo-Araujo-Jr'>Paulo de Araujo</a> |
+| <img src="https://avatars.githubusercontent.com/u/126338859?v=4" float="left" width="40px" height=40px> | <a href='https://github.com/MrMesquita'>Marcelo Mesquita</a> |
+| <img src="https://avatars.githubusercontent.com/u/126990110?v=4" float="left" width="40px" height=40px> | <a href='https://github.com/Jonathanwsr'>Jonathan Rocha</a> |
+| <img src="https://avatars.githubusercontent.com/u/180599406?v=4" float="left" width="40px" height=40px> | <a href='https://github.com/Klismans-Nazario'>Klismans Nazário</a> |
+| <img src="https://avatars.githubusercontent.com/u/126925371?v=4" float="left" width="40px" height=40px> | <a href='https://github.com/leandrouser'>Leandro Oliveira</a> |
 
-</div>
 
+</br>
 
 ---
 
@@ -28,14 +37,14 @@ Criar uma API RESTful com operações CRUD que permita consumir e gerenciar dado
 - Spring Boot
 - Maven
 
----
+</br>
 
 ## 📂 Instalação e Execução
 
 1. Clone o repositório:
 
 ```bash
-git clone https://github.com/seu-usuario/RickAndMorty-Spring-API.git
+git clone https://github.com/Exploit-Experts/RickAndMorty-Spring-API.git
 ```
 2. Navegue até o diretório do projeto:
 
@@ -51,7 +60,7 @@ mvn clean install
 java -jar .\target\ludus-0.0.1-SNAPSHOT.jar
 ```
 
----
+</br>
 
 ## 📃 Endpoints
 
@@ -64,8 +73,10 @@ java -jar .\target\ludus-0.0.1-SNAPSHOT.jar
 
 <p>We welcome contributions from the open-source community. If you have any ideas, bug fixes, or feature requests, feel free to submit a pull request.</p>
 
----
+</br>
 
 ## ⚖️ Licença
 
-Este projeto está licenciado sob a licença MIT. Veja o arquivo LICENSE para mais informações.
+Este projeto está licenciado sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para mais informações.
+
+<img src="https://capsule-render.vercel.app/api?type=waving&height=200&color=gradient&reversal=false&section=footer">
