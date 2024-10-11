@@ -1,1 +1,1 @@
-# RickAndMorty-Spring-Web
+# RickAndMorty-Spring-CRUD
