@@ -1,6 +1,6 @@
-package com.rickmorty.Controller;
+package com.rickmorty.Controllers;
 
-import com.rickmorty.Service.CharacterService;
+import com.rickmorty.Services.CharacterService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;

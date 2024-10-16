@@ -1,4 +1,4 @@
-package com.rickmorty.Service;
+package com.rickmorty.Services;
 
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
