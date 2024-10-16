@@ -2,7 +2,7 @@
     <img src="https://capsule-render.vercel.app/api?type=waving&height=200&color=gradient&text=RickAndMorty%20API&reversal=false">
 </div>
 
-# 🚀Rick and Morty Spring CRUD API
+# 🚀Rick and Morty Spring API
 
 RickAndMorty-Spring-API é um backend desenvolvido com Java e Spring Boot que implementa uma API RESTful para listar dados dos personagens da série Rick and Morty. O projeto permite a visualização de informações dos personagens e está preparado para ser consumido por um front-end separado. Este serviço fornece uma base robusta para integração com interfaces cliente que consumam dados de personagens por meio de endpoints.
 </br>
