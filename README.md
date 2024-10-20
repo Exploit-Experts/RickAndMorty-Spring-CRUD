@@ -9,7 +9,7 @@ RickAndMorty-Spring-API é um backend desenvolvido com Java e Spring Boot que im
 
 ## 🎯 Objetivo
 
-Criar uma API RESTful que permita consumir e visualizar dados de personagens da série Rick and Morty, fornecendo 
+Criar uma API RESTful que permita consumir e visualizar dados de personagens da série Rick and Morty, fornecendo
 endpoints para serem utilizados no [front-end Angular](https://github.com/Exploit-Experts/RickAndMorthy-client).
 
 </br>
@@ -57,15 +57,17 @@ mvn clean install
 ```
 4. Execute the jar
 ```
-java -jar .\target\ludus-0.0.1-SNAPSHOT.jar
+java -jar target/rickMorty-0.0.1-SNAPSHOT.jar
 ```
 
 </br>
 
 ## 📃 Endpoints
 
-- `GET /api/characters` - Lista todos os personagens.
-- `GET /api/characters/{id}` - Obtém um personagem específico pelo ID.
+- `GET /character/{id}` - Obtém um personagem específico pelo ID.
+- `GET /episode/{id}` - Obtém um episódio especifico pelo ID.
+- `GET /locations/{id}` - Obtém uma localização específica pelo ID.
+- `GET /locations/` - Obtém todas localizações.
 
 ---
 
