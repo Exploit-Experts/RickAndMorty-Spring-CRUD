@@ -14,7 +14,7 @@ endpoints para serem utilizados no [front-end Angular](https://github.com/Exploi
 
 </br>
 
-## :zombie:Credits
+## 🧑🏻‍💻Credits
 
 
 ||           |
@@ -36,6 +36,7 @@ endpoints para serem utilizados no [front-end Angular](https://github.com/Exploi
 - Java 21
 - Spring Boot
 - Maven
+- MySQL 8.0.23
 
 </br>
 
