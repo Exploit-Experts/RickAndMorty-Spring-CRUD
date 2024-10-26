@@ -19,7 +19,7 @@ public class EpisodeController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public List<EpisodeDto> getAllLocations() {
+    public List<EpisodeDto> getAllEpisodes() {
         return episodeService.findAllEpisode();
     }
 
