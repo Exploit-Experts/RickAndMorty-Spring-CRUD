@@ -66,9 +66,11 @@ java -jar target/rickMorty-0.0.1-SNAPSHOT.jar
 ## 📃 Endpoints
 
 - `GET /character/{id}` - Obtém um personagem específico pelo ID.
-- `GET /episode/{id}` - Obtém um episódio especifico pelo ID.
-- `GET /locations/{id}` - Obtém uma localização específica pelo ID.
+- `GET /episodes` - Obtém todos episódios.
+- `GET /episodes/{id}` - Obtém um episódio especifico pelo ID.
 - `GET /locations/` - Obtém todas localizações.
+- `GET /locations/{id}` - Obtém uma localização específica pelo ID.
+
 
 ---
 

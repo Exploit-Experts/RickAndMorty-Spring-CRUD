@@ -5,10 +5,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.List;
 @JsonIgnoreProperties(ignoreUnknown = true)
-public record ApiResponseDto(
+public record ApiResponseDto<T>(
         @JsonProperty("info")
         InfoDto info,
         @JsonProperty("results")
-        List<LocationDto> results
+        List<T> results
 ) {}
 
