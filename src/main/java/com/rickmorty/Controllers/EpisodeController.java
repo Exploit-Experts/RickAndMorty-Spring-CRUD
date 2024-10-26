@@ -1,13 +1,10 @@
 package com.rickmorty.Controllers;
 
-
 import com.rickmorty.DTO.EpisodeDto;
-import com.rickmorty.DTO.LocationDto;
 import com.rickmorty.Services.EpisodeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
 @RestController
