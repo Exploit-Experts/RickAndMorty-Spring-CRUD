@@ -30,7 +30,7 @@ public class UserModel {
     private LocalDate deleted_at;
 
     public UserModel() {}
-    public UserModel(Long id, boolean active, String name, String surname, String email, String password) {
+    public UserModel(Long id, String name, String surname, String email, String password) {
         this.id = id;
         this.active = true;
         this.name = name;
@@ -38,7 +38,7 @@ public class UserModel {
         this.email = email;
         this.password = password;
         this.date_register = LocalDate.now();
-        this.date_update = null;
+        this.date_update = LocalDate.now();
         this.deleted_at = null;
     }
 
