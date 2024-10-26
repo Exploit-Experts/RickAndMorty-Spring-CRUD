@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rickmorty.DTO.ApiResponseDto;
 import com.rickmorty.DTO.EpisodeDto;
 import org.springframework.stereotype.Service;
-
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -35,6 +34,7 @@ public class EpisodeService {
         }
         return episodeDto;
     }
+
     public List<EpisodeDto> findAllEpisode() {
         try{
             HttpClient client = HttpClient.newHttpClient();
