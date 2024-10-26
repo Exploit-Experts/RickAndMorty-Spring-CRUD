@@ -1,44 +1,58 @@
 package com.rickmorty.Services;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.rickmorty.Models.CharacterModel;
+import com.rickmorty.DTO.ApiResponseDto;
+import com.rickmorty.DTO.CharacterDto;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.reactive.function.client.WebClient;
-import reactor.core.publisher.Mono;
-import static org.springframework.http.MediaType.APPLICATION_JSON;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.util.List;
 
 @Slf4j
 @Service
 public class CharacterService {
 
-    private final WebClient webClient;
+    private static final String URL_API = "https://rickandmortyapi.com/api";
 
-    @Autowired
-    public CharacterService(WebClient.Builder webClientBuilder) {
-        this.webClient = webClientBuilder.baseUrl("https://rickandmortyapi.com/api").build();
+    public CharacterDto getCharacterById(String id) {
+        log.info("Buscando personagem com o id [" + id + "]");
+        CharacterDto characterDto = null;
+
+        try {
+            HttpClient client = HttpClient.newHttpClient();
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(URL_API + "/character/" + id))
+                    .build();
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            ObjectMapper objectMapper = new ObjectMapper();
+            characterDto = objectMapper.readValue(response.body(), CharacterDto.class);
+
+        } catch (Exception e) {
+            log.error("Erro: " + e.getMessage());
+        }
+        return characterDto;
     }
 
-    public Mono<CharacterModel> findACharacterById(String id) {
-        log.info("Buscando personagem com o id [{}]", id);
-        return webClient
-                .get()
-                .uri("/character/" + id)
-                .accept(APPLICATION_JSON)
-                .retrieve()
-                .bodyToMono(String.class)
-                .doOnNext(response -> log.info("Resposta da API: {}", response))
-                .flatMap(response -> {
-                    ObjectMapper objectMapper = new ObjectMapper();
-                    try {
-                        CharacterModel characterModel = objectMapper.readValue(response, CharacterModel.class);
-                        return Mono.just(characterModel);
-                    } catch (JsonProcessingException e) {
-                        log.error("Erro ao deserializar a resposta: {}", e.getMessage());
-                        return Mono.error(e);
-                    }
-                });
+    public List<CharacterDto> findAllCharacter() {
+        try{
+            HttpClient client = HttpClient.newHttpClient();
+
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(URL_API + "/character/"))
+                    .build();
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            ObjectMapper objectMapper = new ObjectMapper();
+
+            ApiResponseDto<CharacterDto> apiResponseDto = objectMapper.readValue(response.body(),
+                    new TypeReference<ApiResponseDto<CharacterDto>>() {});
+            return apiResponseDto.results();
+        } catch (Exception e) {
+            log.error("Um erro aconteceu"+e.getMessage());
+        }
+        return List.of();
     }
 }
