@@ -28,7 +28,7 @@ public record LocationDto(
                 residents.forEach(residentUrl ->
                         modifiedResidents.add(residentUrl.
                                         replace("https://rickandmortyapi.com/api/character/",
-                                                Config.base_url + "/characteres/"))
+                                                Config.base_url + "/characters/"))
                 );
                 residents = modifiedResidents;
         }
