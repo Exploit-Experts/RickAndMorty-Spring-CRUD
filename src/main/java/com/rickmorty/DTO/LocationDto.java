@@ -9,6 +9,7 @@ import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public record LocationDto(
+        
         Integer id,
         @JsonProperty("name")
         String name,
