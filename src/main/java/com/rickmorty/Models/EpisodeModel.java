@@ -13,11 +13,11 @@ public class EpisodeModel {
 
     private int id;
 
-    private String nome;
+    private String name;
 
-    private String codEpisode;
+    private String episodeCode;
 
-    private String lancamento;
+    private Date releaseDate;
 
     private List<String> characters;
 
