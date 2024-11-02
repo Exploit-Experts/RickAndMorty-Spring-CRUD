@@ -28,4 +28,7 @@ public class EpisodeController {
     public EpisodeDto getEpisodeById(@PathVariable String id) {
         return episodeService.getEpisodeById(id);
     }
+
+
+
 }
