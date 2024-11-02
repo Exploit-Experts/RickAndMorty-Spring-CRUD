@@ -33,8 +33,8 @@ public class UserModel {
     public UserModel() {
     }
 
-    public UserModel(Long id, String name, String surname, String email, String password) {
-        this.id = id;
+    public UserModel(String name, String surname, String email, String password) {
+        
         this.active = true;
         this.name = name;
         this.surname = surname;
