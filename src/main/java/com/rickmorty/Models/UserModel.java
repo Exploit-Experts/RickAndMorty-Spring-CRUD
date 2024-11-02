@@ -34,7 +34,7 @@ public class UserModel {
     }
 
     public UserModel(String name, String surname, String email, String password) {
-        
+
         this.active = true;
         this.name = name;
         this.surname = surname;
@@ -45,7 +45,6 @@ public class UserModel {
         this.deleted_at = null;
     }
 
-    // Getters e Setters
 
     public boolean isActive() {
         return active;

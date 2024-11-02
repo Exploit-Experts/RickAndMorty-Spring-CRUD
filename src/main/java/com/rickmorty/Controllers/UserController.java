@@ -20,7 +20,6 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    // Cria um novo usuário
     @PostMapping
     public ResponseEntity<Void> createUser(@RequestBody UserDto userDto) {
         userService.saveUser(userDto);

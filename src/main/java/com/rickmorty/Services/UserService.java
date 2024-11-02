@@ -13,7 +13,6 @@ public class UserService {
     private UserRepository userRepository;
 
 
-    // Salva um novo usuário
     public UserModel saveUser(UserDto userDto) {
         UserModel userModel = new UserModel(userDto.name(), userDto.surname(), userDto.email(), userDto.password());
         return userRepository.save(userModel);
