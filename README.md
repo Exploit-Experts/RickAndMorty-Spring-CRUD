@@ -68,8 +68,10 @@ java -jar target/rickMorty-0.0.1-SNAPSHOT.jar
 - `GET /character/{id}` - Obtém um personagem específico pelo ID.
 - `GET /episodes` - Obtém todos episódios.
 - `GET /episodes/{id}` - Obtém um episódio especifico pelo ID.
-- `GET /locations/` - Obtém todas localizações.
+- `GET /locations` - Obtém todas localizações.
 - `GET /locations/{id}` - Obtém uma localização específica pelo ID.
+- `POST /users` - Cadastra um usuário pelo ID.
+- `DELETE /users/{id}` -  _(soft delete)_ Deleta o usuário pelo ID.
 
 
 ---

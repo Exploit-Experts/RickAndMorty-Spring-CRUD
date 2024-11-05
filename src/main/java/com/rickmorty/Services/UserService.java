@@ -22,7 +22,7 @@ public class UserService {
 
     public void deleteUser(Long id) {
         UserModel userModel = userRepository.findById(id).orElse(null);
-        if (userModel != null) {
+        if (userModel != null || userModel.getActive() != 0) {
             userModel.setActive(0);
             userModel.setDeleted_at(LocalDate.now());
             userRepository.save(userModel);
