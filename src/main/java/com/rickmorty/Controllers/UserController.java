@@ -25,4 +25,11 @@ public class UserController {
         userService.saveUser(userDto);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
+
+    @PutMapping("{id}")
+    public ResponseEntity<Void> update(@PathVariable Long id,
+                                       @RequestBody UserDto userDto) {
+        userService.updateUser(id, userDto);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
 }

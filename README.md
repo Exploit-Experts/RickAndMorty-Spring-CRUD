@@ -70,6 +70,7 @@ java -jar target/rickMorty-0.0.1-SNAPSHOT.jar
 - `GET /episodes/{id}` - Obtém um episódio especifico pelo ID.
 - `GET /locations/` - Obtém todas localizações.
 - `GET /locations/{id}` - Obtém uma localização específica pelo ID.
+- `PUT /users/{id} -` Atualiza totalmente os dados do usuário
 
 
 ---
