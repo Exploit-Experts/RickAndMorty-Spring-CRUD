@@ -21,14 +21,5 @@ public record LocationDto(
         @JsonProperty("url")
         String url
 ) {
-        public LocationDto {
-                List<String> modifiedResidents = new ArrayList<>();
 
-                residents.forEach(residentUrl ->
-                        modifiedResidents.add(residentUrl.
-                                        replace("https://rickandmortyapi.com/api/character/",
-                                                Config.base_url + "/characteres/"))
-                );
-                residents = modifiedResidents;
-        }
 }
