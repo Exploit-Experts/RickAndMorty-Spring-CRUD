@@ -25,7 +25,7 @@ public record EpisodeDto(
                 characters.forEach(characterUrl ->
                         modifiedCharacters.add(characterUrl.
                                 replace("https://rickandmortyapi.com/api/character/",
-                                        Config.base_url + "/characteres/"))
+                                        Config.base_url + "/characters/"))
                 );
                 characters = modifiedCharacters;
         }
