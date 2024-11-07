@@ -49,23 +49,12 @@ public class LocationService {
 
         List<LocationDto> updatedResults = new ArrayList<>();
         for (LocationDto location : apiResponseDto.results()) {
-            List<String> updatedResidents = new ArrayList<>();
-            for (String resident : location.residents()) {
-                updatedResidents.add(resident.replace("https://rickandmortyapi.com/api/character/", Config.base_url + "/characteres/"));
-            }
-
-            LocationDto updatedLocation = new LocationDto(
-                    location.id(),
-                    location.name(),
-                    location.type(),
-                    location.dimension(),
-                    updatedResidents,
-                    location.url().replace("https://rickandmortyapi.com/api/location/", Config.base_url + "/locations/")
-            );
+            LocationDto updatedLocation = rewriteLocationDto(location);
             updatedResults.add(updatedLocation);
         }
         return new ApiResponseDto<>(updatedInfo, updatedResults);
     }
+
 
     private static InfoDto RewriteInfoDto(InfoDto originalInfo) {
         return new InfoDto(
@@ -73,6 +62,22 @@ public class LocationService {
                 originalInfo.pages(),
                 originalInfo.next() != null ? originalInfo.next().replace("https://rickandmortyapi.com/api/location/", Config.base_url + "/api/locations") : null,
                 originalInfo.prev() != null ? originalInfo.prev().replace("https://rickandmortyapi.com/api/location/", Config.base_url + "/api/locations") : null
+        );
+    }
+
+    private LocationDto rewriteLocationDto(LocationDto location) {
+        List<String> updatedResidents = new ArrayList<>();
+        for (String resident : location.residents()) {
+            updatedResidents.add(resident.replace("https://rickandmortyapi.com/api/character/", Config.base_url + "/characteres/"));
+        }
+
+        return new LocationDto(
+                location.id(),
+                location.name(),
+                location.type(),
+                location.dimension(),
+                updatedResidents,
+                location.url().replace("https://rickandmortyapi.com/api/location/", Config.base_url + "/locations/")
         );
     }
 }
