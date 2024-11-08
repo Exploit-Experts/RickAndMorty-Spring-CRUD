@@ -1,24 +1,24 @@
 package com.rickmorty.Models;
 
 import jakarta.persistence.*;
-
 import java.time.LocalDate;
 
 @Entity
 @Table(name = "users")
 public class UserModel {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private boolean active;
+    private boolean active = true;
 
     @Column(nullable = false)
     private String name;
 
     private String surname;
 
-    @Column(nullable = false,unique = true)
+    @Column(nullable = false, unique = true)
     private String email;
 
     @Column(nullable = false)
@@ -27,11 +27,14 @@ public class UserModel {
     private LocalDate date_register;
 
     private LocalDate date_update;
+
     private LocalDate deleted_at;
 
-    public UserModel() {}
-    public UserModel(Long id, String name, String surname, String email, String password) {
-        this.id = id;
+    public UserModel() {
+    }
+
+    public UserModel(String name, String surname, String email, String password) {
+
         this.active = true;
         this.name = name;
         this.surname = surname;
@@ -41,6 +44,7 @@ public class UserModel {
         this.date_update = LocalDate.now();
         this.deleted_at = null;
     }
+
 
     public boolean isActive() {
         return active;
@@ -86,11 +90,15 @@ public class UserModel {
         return date_register;
     }
 
+    public void setDate_register(LocalDate date_register) {
+        this.date_register = date_register;
+    }
+
     public LocalDate getDate_update() {
         return date_update;
     }
 
-    public void setDate_update(LocalDate date_update) {
+    public void setDate_update(LocalDate date_update) { // Alterado para setDate_update
         this.date_update = date_update;
     }
 
@@ -101,4 +109,5 @@ public class UserModel {
     public void setDeleted_at(LocalDate deleted_at) {
         this.deleted_at = deleted_at;
     }
+
 }
