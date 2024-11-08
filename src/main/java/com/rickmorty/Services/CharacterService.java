@@ -50,17 +50,20 @@ public class CharacterService {
 
     public ResponseEntity<byte[]> findCharacterAvatar(String id) {
         try {
-            CharacterDto character = findACharacterById(id);
-            if (character != null && character.image() != null) {
-                URI imageUri = URI.create(character.image());
-                URL imageUrl = imageUri.toURL();
-                byte[] imageBytes = downloadImage(imageUrl);
+            HttpClient client = HttpClient.newHttpClient();
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(URL_API + "/character/" + id))
+                    .build();
 
-                HttpHeaders headers = new HttpHeaders();
-                headers.set("Content-Type", "image/jpeg");
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            ObjectMapper objectMapper = new ObjectMapper();
+            String imageUrl = objectMapper.readTree(response.body()).get("image").asText();
+            byte[] imageBytes = downloadImage(URI.create(imageUrl).toURL());
 
-                return new ResponseEntity<>(imageBytes, headers, HttpStatus.OK);
-            }
+            HttpHeaders headers = new HttpHeaders();
+            headers.set("Content-Type", "image/jpeg");
+
+            return new ResponseEntity<>(imageBytes, headers, HttpStatus.OK);
         } catch (Exception e) {
             log.error("Erro ao buscar avatar do personagem: " + e.getMessage(), e);
         }
@@ -76,7 +79,8 @@ public class CharacterService {
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
             ObjectMapper objectMapper = new ObjectMapper();
 
-            return objectMapper.readValue(response.body(), CharacterDto.class);
+            CharacterDto character = objectMapper.readValue(response.body(), CharacterDto.class);
+            return rewriteCharacterDto(character);
         } catch (Exception e) {
             log.error("Erro ao buscar personagem por ID: " + e.getMessage(), e);
         }
@@ -95,17 +99,21 @@ public class CharacterService {
     }
 
     private InfoDto rewriteInfoDto(InfoDto originalInfo, Integer page) {
-        String nextUrl = originalInfo.next() != null ? Config.base_url + "/characters?page=" + (page != null ? page + 1 : 2) : null;
+        String nextUrl = originalInfo.next() != null
+                ? originalInfo.next().replace("https://rickandmortyapi.com/api/character",
+                        Config.base_url + "/characters")
+                : null;
 
-        String prevUrl = originalInfo.prev() != null ? Config.base_url + "/characters?page=" + (page != null && page > 1 ? page - 1 : 1)
+        String prevUrl = originalInfo.prev() != null
+                ? originalInfo.prev().replace("https://rickandmortyapi.com/api/character",
+                        Config.base_url + "/characters")
                 : null;
 
         return new InfoDto(
                 originalInfo.count(),
                 originalInfo.pages(),
                 nextUrl,
-                prevUrl
-        );
+                prevUrl);
     }
 
     private CharacterDto rewriteCharacterDto(CharacterDto character) {
