@@ -71,6 +71,7 @@ java -jar target/rickMorty-0.0.1-SNAPSHOT.jar
 - `GET /locations` - Obtém todas localizações.
 - `GET /locations/{id}` - Obtém uma localização específica pelo ID.
 - `POST /users` - Cadastra um usuário pelo ID.
+- `PUT /users/{id} -` Atualiza totalmente os dados do usuário
 - `DELETE /users/{id}` -  _(soft delete)_ Deleta o usuário pelo ID.
 
 
