@@ -26,13 +26,10 @@ public class CharacterController {
     @GetMapping("/{id}")
     public ResponseEntity<CharacterDto> getCharacterById(@PathVariable String id) {
         CharacterDto character = characterService.findACharacterById(id);
-        if (character != null) {
-            return new ResponseEntity<>(character, HttpStatus.OK);
-        }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(character, HttpStatus.OK);
     }
 
-    @GetMapping("/avatar/{id}")
+    @GetMapping("/avatar/{id}.jpeg")
     public ResponseEntity<byte[]> getCharacterAvatar(@PathVariable String id) {
         return characterService.findCharacterAvatar(id);
     }
