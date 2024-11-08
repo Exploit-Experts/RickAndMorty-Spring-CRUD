@@ -8,6 +8,8 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
+import java.time.LocalDate;
+
 @Service
 public class UserService {
 
@@ -33,6 +35,15 @@ public class UserService {
             user.setDate_update(LocalDateTime.now());
 
             userRepository.save(user);
+        }
+    }
+
+    public void deleteUser(Long id) {
+        UserModel userModel = userRepository.findById(id).orElse(null);
+        if (userModel != null || userModel.getActive() != 0) {
+            userModel.setActive(0);
+            userModel.setDeleted_at(LocalDate.now());
+            userRepository.save(userModel);
         }
     }
 }
