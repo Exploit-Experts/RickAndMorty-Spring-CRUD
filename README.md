@@ -68,6 +68,7 @@ java -jar target/rickMorty-0.0.1-SNAPSHOT.jar
 - `GET /characters` - Obtém todos personagens.
 - `GET /characters?page=2` - Obtém todos personagens de uma página específica.
 - `GET /characters/{id}` - Obtém um personagem específico pelo ID.
+- `GET /characters/avatar/{id}.jpeg` - Obtém o avatar de um personagem específico pelo ID.
 - `GET /episodes` - Obtém todos episódios.
 - `GET /episodes/{id}` - Obtém um episódio especifico pelo ID.
 - `GET /locations` - Obtém todas localizações.
