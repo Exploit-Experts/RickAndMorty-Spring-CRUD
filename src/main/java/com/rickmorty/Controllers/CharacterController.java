@@ -3,7 +3,6 @@ package com.rickmorty.Controllers;
 import com.rickmorty.Services.CharacterService;
 import com.rickmorty.DTO.ApiResponseDto;
 import com.rickmorty.DTO.CharacterDto;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
