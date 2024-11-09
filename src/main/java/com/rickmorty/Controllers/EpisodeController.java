@@ -1,14 +1,12 @@
 package com.rickmorty.Controllers;
 
-
+import com.rickmorty.DTO.ApiResponseDto;
 import com.rickmorty.DTO.EpisodeDto;
-import com.rickmorty.DTO.LocationDto;
 import com.rickmorty.Services.EpisodeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/episodes")
@@ -18,17 +16,15 @@ public class EpisodeController {
     private EpisodeService episodeService;
 
     @GetMapping
-    @ResponseStatus(HttpStatus.OK)
-    public List<EpisodeDto> getAllEpisodes() {
-        return episodeService.findAllEpisode();
+    public ResponseEntity<ApiResponseDto<EpisodeDto>> getAllEpisodes(
+        @RequestParam(required = false) Integer page) {
+        ApiResponseDto<EpisodeDto> episodes = episodeService.findAllEpisodes(page);
+        return ResponseEntity.ok(episodes);
     }
 
     @GetMapping("/{id}")
-    @ResponseStatus(HttpStatus.OK)
-    public EpisodeDto getEpisodeById(@PathVariable String id) {
-        return episodeService.getEpisodeById(id);
+    public ResponseEntity<EpisodeDto> getEpisodeById(@PathVariable String id) {
+        EpisodeDto episode = episodeService.findEpisodeById(id);
+        return new ResponseEntity<>(episode, HttpStatus.OK);
     }
-
-
-
 }
