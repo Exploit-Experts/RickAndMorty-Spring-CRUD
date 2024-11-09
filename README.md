@@ -78,6 +78,13 @@ java -jar target/rickMorty-0.0.1-SNAPSHOT.jar
 - `PATCH /users/{id}` - Atualiza parcialmente os dados do usuário pelo ID.
 - `DELETE /users/{id}` -  _(soft delete)_ Deleta o usuário pelo ID.
 
+---
+
+## 📖 Swagger Documentation
+
+The API documentation is available via Swagger. You can access it by navigating to the following URL after running the application: `http://localhost:8080/swagger-ui/index.html`
+
+This documentation provides a detailed description of all available endpoints, their parameters, and responses, making it easier to understand and interact with the API.
 
 ---
 
