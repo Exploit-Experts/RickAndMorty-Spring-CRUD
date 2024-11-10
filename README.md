@@ -32,7 +32,7 @@ Create a RESTful API that allows consuming and viewing data of characters from t
 
 </br>
 
-## 🧑🏻‍💻Credits
+## 🧑🏻‍💻 Credits
 
 
 ||           |
