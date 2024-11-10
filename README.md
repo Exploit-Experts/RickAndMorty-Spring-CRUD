@@ -12,6 +12,7 @@
 RickAndMorty-Spring-API is a backend developed with Java and Spring Boot that implements a RESTful API to list data of characters from the Rick and Morty series. The project allows viewing character information and is prepared to be consumed by a separate front-end. 
 
 This service provides a robust base for integration with client interfaces that consume character data through endpoints.
+
 </br>
 
 ## 📋 Table of Contents
