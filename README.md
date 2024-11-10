@@ -18,11 +18,11 @@ This service provides a robust base for integration with client interfaces that 
 ## 📋 Table of Contents
 - [🎯 Objective](#-objective)
 - [🧑🏻‍💻 Credits](#-credits)
-- [🛠️ Technologies Used](#️-technologies-used)
+- [🛠️ Technologies Used](#-technologies-used)
 - [📂 Installation and Execution](#-installation-and-execution)
 - [📃 Endpoints](#-endpoints)
 - [🤝 Contributing](#-contributing)
-- [⚖️ License](#️-license)
+- [⚖️ License](#-license)
 
 </br>
 
