@@ -19,6 +19,7 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -88,7 +89,7 @@ public class CharacterService {
     }
 
     private ApiResponseDto<CharacterDto> rewriteApiResponse(ApiResponseDto<CharacterDto> apiResponseDto) {
-        InfoDto updatedInfo = rewriteInfoDto(apiResponseDto.info(), null);
+        InfoDto updatedInfo = rewriteInfoDto(apiResponseDto.info());
 
         List<CharacterDto> updatedResults = new ArrayList<>();
         for (CharacterDto character : apiResponseDto.results()) {
@@ -98,17 +99,17 @@ public class CharacterService {
         return new ApiResponseDto<>(updatedInfo, updatedResults);
     }
 
-    private InfoDto rewriteInfoDto(InfoDto originalInfo, Integer page) {
-        String nextUrl = originalInfo.next() != null
-                ? originalInfo.next().replace("https://rickandmortyapi.com/api/character",
-                        Config.base_url + "/characters")
-                : null;
-
-        String prevUrl = originalInfo.prev() != null
-                ? originalInfo.prev().replace("https://rickandmortyapi.com/api/character",
-                        Config.base_url + "/characters")
-                : null;
-
+    private InfoDto rewriteInfoDto(InfoDto originalInfo) {
+        String nextUrl = Optional.ofNullable(originalInfo.next())
+                .map(next -> next.replace("https://rickandmortyapi.com/api/character",
+                        Config.base_url + "/characters"))
+                .orElse(null);
+    
+        String prevUrl = Optional.ofNullable(originalInfo.prev())
+                .map(prev -> prev.replace("https://rickandmortyapi.com/api/character",
+                        Config.base_url + "/characters"))
+                .orElse(null);
+    
         return new InfoDto(
                 originalInfo.count(),
                 originalInfo.pages(),
