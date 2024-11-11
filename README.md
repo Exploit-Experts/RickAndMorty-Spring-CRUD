@@ -18,11 +18,11 @@ This service provides a robust base for integration with client interfaces that 
 ## 📋 Table of Contents
 - [🎯 Objective](#-objective)
 - [🧑🏻‍💻 Credits](#-credits)
-- [🛠️ Technologies Used](#-technologies-used)
+- [🛠️ Technologies Used](#technologies-used)
 - [📂 Installation and Execution](#-installation-and-execution)
 - [📃 Endpoints](#-endpoints)
 - [🤝 Contributing](#-contributing)
-- [⚖️ License](#-license)
+- [⚖️ License](#license)
 
 </br>
 
@@ -34,7 +34,6 @@ Create a RESTful API that allows consuming and viewing data of characters from t
 
 ## 🧑🏻‍💻 Credits
 
-
 ||           |
 | ---------------- | ---------------- |
 | <img src="https://avatars.githubusercontent.com/u/114788642?v=4" float="left" width="40px" height=40px> | <a href='https://github.com/brunoliratm'>Bruno Magno</a> |
@@ -44,11 +43,9 @@ Create a RESTful API that allows consuming and viewing data of characters from t
 | <img src="https://avatars.githubusercontent.com/u/180599406?v=4" float="left" width="40px" height=40px> | <a href='https://github.com/Klismans-Nazario'>Klismans Nazário</a> |
 | <img src="https://avatars.githubusercontent.com/u/126925371?v=4" float="left" width="40px" height=40px> | <a href='https://github.com/leandrouser'>Leandro Oliveira</a> |
 
-
 </br>
 
-
-## 🛠️ Technologies Used
+## Technologies Used
 
 - ![Java](https://img.shields.io/badge/Java-21-blue)
 - ![MySQL](https://img.shields.io/badge/database-MySQL-blue)
@@ -104,6 +101,12 @@ java -jar target/rickMorty-0.0.1-SNAPSHOT.jar
     - `PATCH /users/{id}` - Partially updates user data by ID.
     - `DELETE /users/{id}` - _(soft delete)_ Deletes the user by ID.
 
+## 📖 Swagger Documentation
+
+The API documentation is available via Swagger. You can access it by navigating to the following URL after running the application: `http://localhost:8080/swagger-ui/index.html`
+
+This documentation provides a detailed description of all available endpoints, their parameters, and responses, making it easier to understand and interact with the API.
+
 </br>
 
 ## 🚧 Roadmap
@@ -120,12 +123,12 @@ java -jar target/rickMorty-0.0.1-SNAPSHOT.jar
 
 </br>
 
-## ⚖️ License
+## License
 
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for more information.
 
 
-### 📚 References
+### References
 - [Java 21 Documentation](https://docs.oracle.com/en/java/javase/21/)
 - [Spring Boot](https://spring.io/projects/spring-boot)
 - [Lombok](https://projectlombok.org/)
