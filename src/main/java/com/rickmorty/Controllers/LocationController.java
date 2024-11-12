@@ -2,7 +2,6 @@ package com.rickmorty.Controllers;
 
 import com.rickmorty.DTO.ApiResponseDto;
 import com.rickmorty.DTO.LocationDto;
-import com.rickmorty.Models.LocationModel;
 import com.rickmorty.Services.LocationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -28,5 +27,11 @@ public class LocationController {
             @RequestParam(value = "page", required = false) Integer page) {
         ApiResponseDto<LocationDto> locations = locationService.findAllLocations(page);
         return ResponseEntity.ok(locations);
+    }
+
+    @GetMapping("/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public LocationDto getLocationById(@PathVariable String id) {
+        return locationService.getLocationById(id);
     }
 }

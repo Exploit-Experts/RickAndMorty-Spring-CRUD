@@ -7,6 +7,7 @@ import com.rickmorty.DTO.InfoDto;
 import com.rickmorty.DTO.LocationDto;
 import com.rickmorty.Utils.Config;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 
@@ -25,6 +26,13 @@ public class LocationService {
 
     private static final String URL_API = "https://rickandmortyapi.com/api";
 
+    private final ObjectMapper objectMapper;
+
+    @Autowired
+    public LocationService(ObjectMapper objectMapper) {
+        this.objectMapper = objectMapper;
+    }
+
     public ApiResponseDto findAllLocations(Integer page) {
         try{
             HttpClient client = HttpClient.newHttpClient();
@@ -33,13 +41,29 @@ public class LocationService {
                     .uri(URI.create(URL_API + "/location/" + (page != null ? "?page=" +page : "")))
                     .build();
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-            ObjectMapper objectMapper = new ObjectMapper();
 
             ApiResponseDto<LocationDto> apiResponseDto = objectMapper.readValue(response.body(),
                     new TypeReference<ApiResponseDto<LocationDto>>() {});
             return RewriteApiResponse(apiResponseDto);
         } catch (Exception e) {
             System.out.println("Um erro aconteceu"+e.getMessage());
+        }
+        return null;
+    }
+
+    public LocationDto getLocationById(String id) {
+        try {
+            HttpClient client = HttpClient.newHttpClient();
+
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(URL_API + "/location/" + id))
+                    .build();
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+            return objectMapper.readValue(response.body(), LocationDto.class);
+        } catch (Exception e) {
+            System.out.println("Um erro ocorreu ao buscar a localização com ID " + id + ": " + e.getMessage());
+
         }
         return null;
     }
@@ -80,4 +104,6 @@ public class LocationService {
                 location.url().replace("https://rickandmortyapi.com/api/location/", Config.base_url + "/locations/")
         );
     }
+
+
 }

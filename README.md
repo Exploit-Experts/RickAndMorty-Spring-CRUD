@@ -2,20 +2,37 @@
     <img src="https://capsule-render.vercel.app/api?type=waving&height=200&color=gradient&text=RickAndMorty%20API&reversal=false">
 </div>
 
+
+
 # 🚀Rick and Morty Spring API
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+![GitHub pull requests](https://img.shields.io/github/issues-pr/Exploit-Experts/RickAndMorty-Spring-API)
+![GitHub contributors](https://img.shields.io/github/contributors/Exploit-Experts/RickAndMorty-Spring-API)
 
-RickAndMorty-Spring-API é um backend desenvolvido com Java e Spring Boot que implementa uma API RESTful para listar dados dos personagens da série Rick and Morty. O projeto permite a visualização de informações dos personagens e está preparado para ser consumido por um front-end separado. Este serviço fornece uma base robusta para integração com interfaces cliente que consumam dados de personagens por meio de endpoints.
+RickAndMorty-Spring-API is a backend developed with Java and Spring Boot that implements a RESTful API to list data of characters from the Rick and Morty series. The project allows viewing character information and is prepared to be consumed by a separate front-end. 
+
+This service provides a robust base for integration with client interfaces that consume character data through endpoints.
+
 </br>
 
-## 🎯 Objetivo
-
-Criar uma API RESTful que permita consumir e visualizar dados de personagens da série Rick and Morty, fornecendo
-endpoints para serem utilizados no [front-end Angular](https://github.com/Exploit-Experts/RickAndMorthy-client).
+## 📋 Table of Contents
+- [🎯 Objective](#-objective)
+- [🧑🏻‍💻 Credits](#-credits)
+- [🛠️ Technologies Used](#technologies-used)
+- [📂 Installation and Execution](#-installation-and-execution)
+- [📃 Endpoints](#-endpoints)
+- [🤝 Contributing](#-contributing)
+- [⚖️ License](#license)
 
 </br>
 
-## 🧑🏻‍💻Credits
+## 🎯 Objective
 
+Create a RESTful API that allows consuming and viewing data of characters from the Rick and Morty series, providing endpoints to be used in the [Angular front-end](https://github.com/Exploit-Experts/RickAndMorthy-client).
+
+</br>
+
+## 🧑🏻‍💻 Credits
 
 ||           |
 | ---------------- | ---------------- |
@@ -26,36 +43,36 @@ endpoints para serem utilizados no [front-end Angular](https://github.com/Exploi
 | <img src="https://avatars.githubusercontent.com/u/180599406?v=4" float="left" width="40px" height=40px> | <a href='https://github.com/Klismans-Nazario'>Klismans Nazário</a> |
 | <img src="https://avatars.githubusercontent.com/u/126925371?v=4" float="left" width="40px" height=40px> | <a href='https://github.com/leandrouser'>Leandro Oliveira</a> |
 
+</br>
+
+## Technologies Used
+
+- ![Java](https://img.shields.io/badge/Java-21-blue)
+- ![MySQL](https://img.shields.io/badge/database-MySQL-blue)
+- ![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.3.5-green)
+- ![Spring Boot](https://img.shields.io/badge/Maven-3.9.9-green)
+- ![Spring Data JPA](https://img.shields.io/badge/Spring%20Data%20JPA-3.3.4-green)
+- ![Lombok](https://img.shields.io/badge/Lombok-1.18.34-green)
 
 </br>
 
----
+## 📂 Installation and Execution
 
-## 🛠️ Tecnologias Utilizadas
-
-- Java 21
-- Spring Boot
-- Maven
-- MySQL 8.0.23
-
-</br>
-
-## 📂 Instalação e Execução
-
-1. Clone o repositório:
-
+1. Clone the repository:
 ```bash
 git clone https://github.com/Exploit-Experts/RickAndMorty-Spring-API.git
 ```
-2. Navegue até o diretório do projeto:
 
+2. Navigate to the project directory:
 ```bash
 cd RickAndMorty-Spring-API
 ```
+
 3. Copile project
 ```java
 mvn clean install
 ```
+
 4. Execute the jar
 ```
 java -jar target/rickMorty-0.0.1-SNAPSHOT.jar
@@ -65,15 +82,40 @@ java -jar target/rickMorty-0.0.1-SNAPSHOT.jar
 
 ## 📃 Endpoints
 
-- `GET /character/{id}` - Obtém um personagem específico pelo ID.
-- `GET /episodes` - Obtém todos episódios.
-- `GET /episodes/{id}` - Obtém um episódio especifico pelo ID.
-- `GET /locations` - Obtém todas localizações da primeira página.
-- `GET /locations?page=2` - Obtém todas localizações de uma página em específica.
-- `GET /locations/{id}` - Obtém uma localização específica pelo ID.
+- **Characters**
+    - `GET /characters` - Retrieves all characters from the first page.
+    - `GET /characters?page=2` - Retrieves all characters from a specific page.
+    - `GET /characters/{id}` - Retrieves a specific character by ID.
+    - `GET /characters/avatar/{id}.jpeg` - Retrieves the avatar of a specific character by ID.
+- **Episodes**
+    - `GET /episodes` - Retrieves all episodes from the first page.
+    - `GET /episodes?page=2` - Retrieves all episodes from a specific page.
+    - `GET /episodes/{id}` - Retrieves a specific episode by ID.
+- **Locations**
+    - `GET /locations` - Retrieves all locations from the first page.
+    - `GET /locations?page=2` - Retrieves all locations from a specific page.
+    - `GET /locations/{id}` - Retrieves a specific location by ID.
+- **Users**
+    - `POST /users` - Registers a user by ID.
+    - `PUT /users/{id}` - Fully updates user data.
+    - `PATCH /users/{id}` - Partially updates user data by ID.
+    - `DELETE /users/{id}` - _(soft delete)_ Deletes the user by ID.
 
+## 📖 Swagger Documentation
 
----
+The API documentation is available via Swagger. You can access it by navigating to the following URL after running the application: `http://localhost:8080/swagger-ui/index.html`
+
+This documentation provides a detailed description of all available endpoints, their parameters, and responses, making it easier to understand and interact with the API.
+
+</br>
+
+## 🚧 Roadmap
+- [ ] Implement the remaining endpoints.
+- [ ] Implement the remaining CRUD operations.
+- [ ] Implement the remaining features.
+- [ ] Implement the remaining tests.
+
+</br>
 
 ## 🤝 Contributing
 
@@ -81,8 +123,14 @@ java -jar target/rickMorty-0.0.1-SNAPSHOT.jar
 
 </br>
 
-## ⚖️ Licença
+## License
 
-Este projeto está licenciado sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para mais informações.
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for more information.
+
+
+### References
+- [Java 21 Documentation](https://docs.oracle.com/en/java/javase/21/)
+- [Spring Boot](https://spring.io/projects/spring-boot)
+- [Lombok](https://projectlombok.org/)
 
 <img src="https://capsule-render.vercel.app/api?type=waving&height=200&color=gradient&reversal=false&section=footer">

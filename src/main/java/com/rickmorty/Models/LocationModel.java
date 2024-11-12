@@ -21,3 +21,5 @@ public class LocationModel {
     private String url;
 
 }
+
+
