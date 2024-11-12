@@ -17,7 +17,7 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.ArrayList;
 import java.util.List;
-
+import java.util.stream.Collectors;
 
 
 @Slf4j
@@ -46,7 +46,7 @@ public class LocationService {
                     new TypeReference<ApiResponseDto<LocationDto>>() {});
             return RewriteApiResponse(apiResponseDto);
         } catch (Exception e) {
-            System.out.println("Um erro aconteceu"+e.getMessage());
+            log.error("Erro ao buscar localizações: " + e.getMessage(), e);
         }
         return null;
     }
@@ -62,8 +62,7 @@ public class LocationService {
 
             return objectMapper.readValue(response.body(), LocationDto.class);
         } catch (Exception e) {
-            System.out.println("Um erro ocorreu ao buscar a localização com ID " + id + ": " + e.getMessage());
-
+            log.error("Erro ao buscar localização por id: " + e.getMessage(), e);
         }
         return null;
     }
@@ -84,23 +83,21 @@ public class LocationService {
         return new InfoDto(
                 originalInfo.count(),
                 originalInfo.pages(),
-                originalInfo.next() != null ? originalInfo.next().replace("https://rickandmortyapi.com/api/location/", Config.base_url + "/api/locations") : null,
-                originalInfo.prev() != null ? originalInfo.prev().replace("https://rickandmortyapi.com/api/location/", Config.base_url + "/api/locations") : null
+                originalInfo.next() != null ? originalInfo.next().replace("https://rickandmortyapi.com/api/location/", Config.base_url + "/locations") : null,
+                originalInfo.prev() != null ? originalInfo.prev().replace("https://rickandmortyapi.com/api/location/", Config.base_url + "/locations") : null
         );
     }
 
     private LocationDto rewriteLocationDto(LocationDto location) {
-        List<String> updatedResidents = new ArrayList<>();
-        for (String resident : location.residents()) {
-            updatedResidents.add(resident.replace("https://rickandmortyapi.com/api/character/", Config.base_url + "/characteres/"));
-        }
-
         return new LocationDto(
                 location.id(),
                 location.name(),
                 location.type(),
                 location.dimension(),
-                updatedResidents,
+                location.residents().stream()
+                        .map(resident -> resident.replace("https://rickandmortyapi.com/api/character/",
+                                Config.base_url + "/characters/"))
+                        .collect(Collectors.toList()),
                 location.url().replace("https://rickandmortyapi.com/api/location/", Config.base_url + "/locations/")
         );
     }
