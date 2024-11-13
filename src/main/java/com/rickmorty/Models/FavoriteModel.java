@@ -17,7 +17,7 @@ public class FavoriteModel {
     private Long id;
 
     @Column(nullable = false)
-    private String apiId;
+    private Long apiId;
 
     @Enumerated(EnumType.STRING)
     private ItemType itemType;

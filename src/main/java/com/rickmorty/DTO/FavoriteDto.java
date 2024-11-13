@@ -6,7 +6,7 @@ import com.rickmorty.enums.ItemType;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public record FavoriteDto(
-        @JsonProperty("apiId") String apiId,
+        @JsonProperty("apiId") Long apiId,
         @JsonProperty("itemType") ItemType itemType,
         @JsonProperty("userId") Long userId
 ) {

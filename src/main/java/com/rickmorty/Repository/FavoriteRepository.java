@@ -14,7 +14,7 @@ import java.util.Optional;
 public interface FavoriteRepository  extends JpaRepository<FavoriteModel, Long> {
 
     @Query("SELECT f FROM FavoriteModel f WHERE f.apiId = :apiId AND f.itemType = :itemType")
-    Optional<FavoriteModel> findByApiIdAndItemType(@Param("apiId") String apiId, @Param("itemType") ItemType itemType);
+    Optional<FavoriteModel> findByApiIdAndItemType(@Param("apiId") Long apiId, @Param("itemType") ItemType itemType);
 
     @Query("SELECT f FROM FavoriteModel f " + " JOIN f.users u " + " WHERE u.id = :userId AND u.active = 1 ")
     Optional<List<FavoriteModel>> findFavoriteByUserId(@Param("userId") Long userId);
