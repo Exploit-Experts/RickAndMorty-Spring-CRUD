@@ -8,6 +8,7 @@ import com.rickmorty.DTO.LocationDto;
 import com.rickmorty.Utils.Config;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 
@@ -24,7 +25,8 @@ import java.util.stream.Collectors;
 @Service
 public class LocationService {
 
-    private static final String URL_API = "https://rickandmortyapi.com/api";
+    @Autowired
+    Config config;
 
     private final ObjectMapper objectMapper;
 
@@ -38,7 +40,7 @@ public class LocationService {
             HttpClient client = HttpClient.newHttpClient();
 
             HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create(URL_API + "/location/" + (page != null ? "?page=" +page : "")))
+                    .uri(URI.create(config.getApiBaseUrl() + "/location/" + (page != null ? "?page=" +page : "")))
                     .build();
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
@@ -56,7 +58,7 @@ public class LocationService {
             HttpClient client = HttpClient.newHttpClient();
 
             HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create(URL_API + "/location/" + id))
+                    .uri(URI.create(config.getApiBaseUrl() + "/location/" + id))
                     .build();
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
@@ -79,12 +81,12 @@ public class LocationService {
     }
 
 
-    private static InfoDto RewriteInfoDto(InfoDto originalInfo) {
+    private InfoDto RewriteInfoDto(InfoDto originalInfo) {
         return new InfoDto(
                 originalInfo.count(),
                 originalInfo.pages(),
-                originalInfo.next() != null ? originalInfo.next().replace("https://rickandmortyapi.com/api/location/", Config.base_url + "/locations") : null,
-                originalInfo.prev() != null ? originalInfo.prev().replace("https://rickandmortyapi.com/api/location/", Config.base_url + "/locations") : null
+                originalInfo.next() != null ? originalInfo.next().replace(config.getApiBaseUrl() + "/location/", config.getLocalBaseUrl() + "/locations") : null,
+                originalInfo.prev() != null ? originalInfo.prev().replace(config.getApiBaseUrl() + "/location/", config.getLocalBaseUrl() + "/locations") : null
         );
     }
 
@@ -95,10 +97,10 @@ public class LocationService {
                 location.type(),
                 location.dimension(),
                 location.residents().stream()
-                        .map(resident -> resident.replace("https://rickandmortyapi.com/api/character/",
-                                Config.base_url + "/characters/"))
+                        .map(resident -> resident.replace(config.getApiBaseUrl() + "/character/",
+                                config.getLocalBaseUrl() + "/characters/"))
                         .collect(Collectors.toList()),
-                location.url().replace("https://rickandmortyapi.com/api/location/", Config.base_url + "/locations/")
+                location.url().replace("https://rickandmortyapi.com/api/location/", config.getLocalBaseUrl() + "/locations/")
         );
     }
 

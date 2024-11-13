@@ -7,6 +7,8 @@ import com.rickmorty.DTO.EpisodeDto;
 import com.rickmorty.DTO.InfoDto;
 import com.rickmorty.Utils.Config;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -21,12 +23,13 @@ import java.util.stream.Collectors;
 @Service
 public class EpisodeService {
 
-    private static final String URL_API = "https://rickandmortyapi.com/api";
+    @Autowired
+    Config config;
 
     public ApiResponseDto<EpisodeDto> findAllEpisodes(Integer page) {
         try {
             HttpClient client = HttpClient.newHttpClient();
-            String urlWithPage = URL_API + "/episode" + (page != null ? "?page=" + page : "");
+            String urlWithPage = config.getApiBaseUrl() + "/episode" + (page != null ? "?page=" + page : "");
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(urlWithPage))
                     .build();
@@ -48,7 +51,7 @@ public class EpisodeService {
         try {
             HttpClient client = HttpClient.newHttpClient();
             HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create(URL_API + "/episode/" + id))
+                    .uri(URI.create(config.getApiBaseUrl() + "/episode/" + id))
                     .build();
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
             ObjectMapper objectMapper = new ObjectMapper();
@@ -74,13 +77,13 @@ public class EpisodeService {
 
     private InfoDto rewriteInfoDto(InfoDto originalInfo) {
         String nextUrl = Optional.ofNullable(originalInfo.next())
-                .map(next -> next.replace("https://rickandmortyapi.com/api/episode",
-                        Config.base_url + "/episodes"))
+                .map(next -> next.replace(config.getApiBaseUrl()+ "/episode",
+                        config.getLocalBaseUrl() + "/episodes"))
                 .orElse(null);
     
         String prevUrl = Optional.ofNullable(originalInfo.prev())
-                .map(prev -> prev.replace("https://rickandmortyapi.com/api/episode",
-                        Config.base_url + "/episodes"))
+                .map(prev -> prev.replace(config.getApiBaseUrl() + "/episodes",
+                        config.getLocalBaseUrl() + "/episodes"))
                 .orElse(null);
     
         return new InfoDto(
@@ -97,8 +100,8 @@ public class EpisodeService {
                 episode.episodeCode(),
                 episode.releaseDate(),
                 episode.characters().stream()
-                        .map(character -> character.replace("https://rickandmortyapi.com/api/character/",
-                                Config.base_url + "/characters/"))
+                        .map(character -> character.replace(config.getApiBaseUrl() + "/character/",
+                                config.getLocalBaseUrl() + "/characters/"))
                         .collect(Collectors.toList()));
     }
 }
