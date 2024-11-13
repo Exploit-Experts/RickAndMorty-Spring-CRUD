@@ -100,6 +100,9 @@ java -jar target/rickMorty-0.0.1-SNAPSHOT.jar
     - `PUT /users/{id}` - Fully updates user data.
     - `PATCH /users/{id}` - Partially updates user data by ID.
     - `DELETE /users/{id}` - _(soft delete)_ Deletes the user by ID.
+- **Favorites**
+  - `POST /favorites` - Registers a favorite and relationate with an user.
+
 
 ## 📖 Swagger Documentation
 

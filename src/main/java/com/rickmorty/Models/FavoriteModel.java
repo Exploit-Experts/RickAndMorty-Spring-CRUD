@@ -16,7 +16,8 @@ public class FavoriteModel {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String apiId;
+    @Column(nullable = false)
+    private Long apiId;
 
     @Enumerated(EnumType.STRING)
     private ItemType itemType;
