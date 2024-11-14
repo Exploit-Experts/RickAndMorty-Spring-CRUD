@@ -7,6 +7,7 @@ import com.rickmorty.DTO.CharacterDto;
 import com.rickmorty.DTO.InfoDto;
 import com.rickmorty.Utils.Config;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,12 +27,13 @@ import java.util.stream.Collectors;
 @Service
 public class CharacterService {
 
-    private static final String URL_API = "https://rickandmortyapi.com/api";
+    @Autowired
+    Config config;
 
     public ApiResponseDto<CharacterDto> findAllCharacters(Integer page) {
         try {
             HttpClient client = HttpClient.newHttpClient();
-            String urlWithPage = URL_API + "/character" + (page != null ? "?page=" + page : "");
+            String urlWithPage = config.getApiBaseUrl() + "/character" + (page != null ? "?page=" + page : "");
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(urlWithPage))
                     .build();
@@ -53,7 +55,7 @@ public class CharacterService {
         try {
             HttpClient client = HttpClient.newHttpClient();
             HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create(URL_API + "/character/" + id))
+                    .uri(URI.create(config.getApiBaseUrl() + "/character/" + id))
                     .build();
 
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
@@ -75,7 +77,7 @@ public class CharacterService {
         try {
             HttpClient client = HttpClient.newHttpClient();
             HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create(URL_API + "/character/" + id))
+                    .uri(URI.create(config.getApiBaseUrl() + "/character/" + id))
                     .build();
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
             ObjectMapper objectMapper = new ObjectMapper();
@@ -101,13 +103,13 @@ public class CharacterService {
 
     private InfoDto rewriteInfoDto(InfoDto originalInfo) {
         String nextUrl = Optional.ofNullable(originalInfo.next())
-                .map(next -> next.replace("https://rickandmortyapi.com/api/character",
-                        Config.base_url + "/characters"))
+                .map(next -> next.replace(config.getApiBaseUrl() + "/character",
+                        config.getLocalBaseUrl() + "/characters"))
                 .orElse(null);
     
         String prevUrl = Optional.ofNullable(originalInfo.prev())
-                .map(prev -> prev.replace("https://rickandmortyapi.com/api/character",
-                        Config.base_url + "/characters"))
+                .map(prev -> prev.replace(config.getApiBaseUrl() + "/character",
+                        config.getLocalBaseUrl() + "/characters"))
                 .orElse(null);
     
         return new InfoDto(
@@ -125,11 +127,11 @@ public class CharacterService {
                 character.species(),
                 character.type(),
                 character.gender(),
-                character.image().replace("https://rickandmortyapi.com/api/character/",
-                        Config.base_url + "/characters/"),
+                character.image().replace(config.getApiBaseUrl() +"/character/",
+                        config.getLocalBaseUrl() + "/characters/"),
                 character.episode().stream()
-                        .map(episode -> episode.replace("https://rickandmortyapi.com/api/episode/",
-                                Config.base_url + "/episodes/"))
+                        .map(episode -> episode.replace(config.getApiBaseUrl() + "/episode/",
+                                config.getLocalBaseUrl() + "/episodes/"))
                         .collect(Collectors.toList()));
     }
 
