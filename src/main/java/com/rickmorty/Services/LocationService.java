@@ -100,7 +100,7 @@ public class LocationService {
                         .map(resident -> resident.replace(config.getApiBaseUrl() + "/character/",
                                 config.getLocalBaseUrl() + "/characters/"))
                         .collect(Collectors.toList()),
-                location.url().replace("https://rickandmortyapi.com/api/location/", config.getLocalBaseUrl() + "/locations/")
+                location.url().replace(config.getApiBaseUrl()+"/location/", config.getLocalBaseUrl() + "/locations/")
         );
     }
 

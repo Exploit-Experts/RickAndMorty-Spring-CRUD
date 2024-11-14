@@ -82,7 +82,7 @@ public class EpisodeService {
                 .orElse(null);
     
         String prevUrl = Optional.ofNullable(originalInfo.prev())
-                .map(prev -> prev.replace(config.getApiBaseUrl() + "/episodes",
+                .map(prev -> prev.replace(config.getApiBaseUrl() + "/episode",
                         config.getLocalBaseUrl() + "/episodes"))
                 .orElse(null);
     
