@@ -1,4 +1,4 @@
- <div align="center" text-align="center">
+<div align="center" text-align="center">
     <img src="https://capsule-render.vercel.app/api?type=waving&height=200&color=gradient&text=RickAndMorty%20API&reversal=false">
 </div>
 
@@ -84,7 +84,14 @@ java -jar target/rickMorty-0.0.1-SNAPSHOT.jar
 
 - **Characters**
     - `GET /characters` - Retrieves all characters from the first page.
-    - `GET /characters?page=2` - Retrieves all characters from a specific page.
+    - `GET /characters?page=1` - Retrieves all characters from a specific page.
+    - `GET /characters?sort=name_asc` - Retrieves all characters sorted by name (`name_asc` or `name_desc`).
+    - `GET /characters?sort=status_asc` - Retrieves all characters sorted by status (`status_asc` or `status_desc`).
+    - `GET /characters?name=Rick` - Retrieves all characters with a specific name.
+    - `GET /characters?status=Alive` - Retrieves all characters with a specific status (`alive`, `dead`, or `unknown`).
+    - `GET /characters?species=Human` - Retrieves all characters with a specific species.
+    - `GET /characters?type=Clone` - Retrieves all characters with a specific type.
+    - `GET /characters?gender=Male` - Retrieves all characters with a specific gender (`female`, `male`, `genderless`, or `unknown`).
     - `GET /characters/{id}` - Retrieves a specific character by ID.
     - `GET /characters/avatar/{id}.jpeg` - Retrieves the avatar of a specific character by ID.
 - **Episodes**
