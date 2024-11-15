@@ -8,12 +8,16 @@ import com.rickmorty.DTO.InfoDto;
 import com.rickmorty.Utils.Config;
 import com.rickmorty.exceptions.CharacterNotFoundException;
 import com.rickmorty.exceptions.InvalidIdException;
+import com.rickmorty.exceptions.InvalidPageNumberException;
+import com.rickmorty.exceptions.PageNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URL;
@@ -34,6 +38,7 @@ public class CharacterService {
 
     public ApiResponseDto<CharacterDto> findAllCharacters(Integer page) {
         try {
+            Integer validacao = page;
             HttpClient client = HttpClient.newHttpClient();
             String urlWithPage = config.getApiBaseUrl() + "/character" + (page != null ? "?page=" + page : "");
             HttpRequest request = HttpRequest.newBuilder()
@@ -46,7 +51,12 @@ public class CharacterService {
             ApiResponseDto<CharacterDto> apiResponseDto = objectMapper.readValue(response.body(),
                     new TypeReference<ApiResponseDto<CharacterDto>>() {
                     });
+
+            if (response.statusCode() != 200) throw new PageNotFoundException();
+
             return rewriteApiResponse(apiResponseDto);
+        } catch (PageNotFoundException e) {
+            throw new PageNotFoundException();
         } catch (Exception e) {
             log.error("Erro ao buscar personagens: " + e.getMessage(), e);
         }
@@ -54,9 +64,7 @@ public class CharacterService {
     }
 
     public ResponseEntity<byte[]> findCharacterAvatar(String id) {
-        if (!id.matches("\\d+")) {
-            throw new InvalidIdException();
-        }
+        if (!id.matches("\\d+")) throw new InvalidIdException();
         try {
             HttpClient client = HttpClient.newHttpClient();
             HttpRequest request = HttpRequest.newBuilder()
