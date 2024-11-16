@@ -17,8 +17,14 @@ public class CharacterController {
 
     @GetMapping
     public ResponseEntity<ApiResponseDto<CharacterDto>> getAllCharacters(
-        @RequestParam(required = false) Integer page) {
-        ApiResponseDto<CharacterDto> characters = characterService.findAllCharacters(page);
+        @RequestParam(required = false) Integer page,
+        @RequestParam(required = false) String name,
+        @RequestParam(required = false) String status,
+        @RequestParam(required = false) String species,
+        @RequestParam(required = false) String type,
+        @RequestParam(required = false) String gender,
+        @RequestParam(required = false) String sort) {
+        ApiResponseDto<CharacterDto> characters = characterService.findAllCharacters(page, name, status, species, type, gender, sort);
         return ResponseEntity.ok(characters);
     }
 
