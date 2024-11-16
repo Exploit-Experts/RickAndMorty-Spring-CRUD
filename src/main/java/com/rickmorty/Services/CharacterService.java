@@ -6,18 +6,12 @@ import com.rickmorty.DTO.ApiResponseDto;
 import com.rickmorty.DTO.CharacterDto;
 import com.rickmorty.DTO.InfoDto;
 import com.rickmorty.Utils.Config;
-import com.rickmorty.exceptions.CharacterNotFoundException;
-import com.rickmorty.exceptions.InvalidIdException;
-import com.rickmorty.exceptions.InvalidParameterException;
-import com.rickmorty.exceptions.PageNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
-
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URL;
@@ -38,7 +32,6 @@ public class CharacterService {
 
     public ApiResponseDto<CharacterDto> findAllCharacters(Integer page) {
         try {
-            if (page != null && page < 0) throw new InvalidParameterException();
             HttpClient client = HttpClient.newHttpClient();
             String urlWithPage = config.getApiBaseUrl() + "/character" + (page != null ? "?page=" + page : "");
             HttpRequest request = HttpRequest.newBuilder()
@@ -51,21 +44,14 @@ public class CharacterService {
             ApiResponseDto<CharacterDto> apiResponseDto = objectMapper.readValue(response.body(),
                     new TypeReference<ApiResponseDto<CharacterDto>>() {
                     });
-
-            if (response.statusCode() == 404) throw new PageNotFoundException();
-
             return rewriteApiResponse(apiResponseDto);
-        } catch (PageNotFoundException e) {
-            throw new PageNotFoundException();
-        }catch (InvalidParameterException e) {
-            throw new InvalidParameterException();
-        }catch (Exception e) {
-            throw new RuntimeException();
+        } catch (Exception e) {
+            log.error("Erro ao buscar personagens: " + e.getMessage(), e);
         }
+        return null;
     }
 
-    public ResponseEntity<byte[]> findCharacterAvatar(Long id) {
-        if (id == null || id < 1) throw new InvalidIdException();
+    public ResponseEntity<byte[]> findCharacterAvatar(String id) {
         try {
             HttpClient client = HttpClient.newHttpClient();
             HttpRequest request = HttpRequest.newBuilder()
@@ -73,8 +59,6 @@ public class CharacterService {
                     .build();
 
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-            if (response.statusCode() == 404) throw new CharacterNotFoundException();
-
             ObjectMapper objectMapper = new ObjectMapper();
             String imageUrl = objectMapper.readTree(response.body()).get("image").asText();
             byte[] imageBytes = downloadImage(URI.create(imageUrl).toURL());
@@ -83,16 +67,13 @@ public class CharacterService {
             headers.set("Content-Type", "image/jpeg");
 
             return new ResponseEntity<>(imageBytes, headers, HttpStatus.OK);
-        }catch (CharacterNotFoundException e) {
-            throw new CharacterNotFoundException();
-        }catch (Exception e) {
+        } catch (Exception e) {
             log.error("Erro ao buscar avatar do personagem: " + e.getMessage(), e);
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-    public CharacterDto findACharacterById(Long id) {
-        if (id == null || id < 1) throw new InvalidIdException();
+    public CharacterDto findACharacterById(String id) {
         try {
             HttpClient client = HttpClient.newHttpClient();
             HttpRequest request = HttpRequest.newBuilder()
@@ -101,12 +82,8 @@ public class CharacterService {
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
             ObjectMapper objectMapper = new ObjectMapper();
 
-            if (response.statusCode() == 404) throw new CharacterNotFoundException();
-
             CharacterDto character = objectMapper.readValue(response.body(), CharacterDto.class);
             return rewriteCharacterDto(character);
-        } catch (CharacterNotFoundException e) {
-            throw new CharacterNotFoundException();
         } catch (Exception e) {
             log.error("Erro ao buscar personagem por ID: " + e.getMessage(), e);
         }
