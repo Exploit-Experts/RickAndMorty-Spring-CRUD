@@ -10,9 +10,6 @@ import com.rickmorty.exceptions.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-
-import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -39,11 +36,8 @@ public class LocationService {
     }
 
     public ApiResponseDto findAllLocations(Integer page) {
+        if (page != null && page < 1) throw new InvalidParameterException("Page precisa ser um número positivo.");
         try {
-            if (page != null && page < 1) {
-                throw new InvalidParameterException("Page precisa ser um número positivo.");
-            }
-
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(config.getApiBaseUrl() + "/location/?page=" + page))
                     .build();
@@ -55,22 +49,17 @@ public class LocationService {
                     new TypeReference<ApiResponseDto<LocationDto>>() {
                     });
             return rewriteApiResponse(apiResponseDto);
-        } catch (InvalidParameterException e) {
-            throw new InvalidParameterException(e.getMessage());
-        } catch (PageNotFoundException e) {
+        }catch (PageNotFoundException e) {
             throw new PageNotFoundException();
         }catch (Exception e) {
-            throw new GenericException(e.getMessage());
+            throw new RuntimeException(e.getMessage());
         }
     }
 
 
-    public LocationDto getLocationById(String id) throws IOException, InterruptedException {
+    public LocationDto getLocationById(Long id) {
+        if (id == null || id < 1) throw new InvalidIdException();
         try {
-            if (id == null || id.isEmpty()) {
-                throw new InvalidIdException("Você precisa enviar um id");
-            }
-
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(config.getApiBaseUrl() + "/location/" + id))
                     .build();
@@ -80,12 +69,10 @@ public class LocationService {
 
             LocationDto location = objectMapper.readValue(response.body(), LocationDto.class);
             return rewriteLocationDto(location);
-        } catch (InvalidIdException ex) {
-            throw new InvalidIdException(ex.getMessage());
         } catch (LocationNotFoundException ex) {
             throw new LocationNotFoundException(ex.getMessage());
         } catch (Exception e) {
-            throw e;
+            throw new RuntimeException(e.getMessage());
         }
     }
 
@@ -97,11 +84,6 @@ public class LocationService {
             LocationDto updatedLocation = rewriteLocationDto(location);
             updatedResults.add(updatedLocation);
         }
-        ApiResponseDto<LocationDto> responseRewrited = new ApiResponseDto<LocationDto>(updatedInfo, updatedResults);
-        if (responseRewrited.results().isEmpty()) {
-            throw new RewriteErrorException("Erro ao reescrever resposta");
-        }
-
         return new ApiResponseDto<>(updatedInfo, updatedResults);
     }
 
@@ -116,7 +98,7 @@ public class LocationService {
     }
 
     private LocationDto rewriteLocationDto(LocationDto location) {
-        LocationDto locationRewrited = new LocationDto(
+        return new LocationDto(
                 location.id(),
                 location.name(),
                 location.type(),
@@ -127,11 +109,6 @@ public class LocationService {
                         .collect(Collectors.toList()),
                 location.url().replace(config.getApiBaseUrl()+"/location/", config.getLocalBaseUrl() + "/locations/")
         );
-        if (locationRewrited == null) {
-            throw new RewriteErrorException("Erro ao reescrever localização");
-        }
-        return locationRewrited;
     }
-
 
 }

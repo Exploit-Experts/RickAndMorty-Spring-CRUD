@@ -32,7 +32,7 @@ public class LocationController {
 
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public LocationDto getLocationById(@PathVariable String id) throws IOException, InterruptedException {
+    public LocationDto getLocationById(@PathVariable Long id) {
         return locationService.getLocationById(id);
     }
 }
