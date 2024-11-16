@@ -1,4 +1,4 @@
- <div align="center" text-align="center">
+<div align="center" text-align="center">
     <img src="https://capsule-render.vercel.app/api?type=waving&height=200&color=gradient&text=RickAndMorty%20API&reversal=false">
 </div>
 
@@ -16,23 +16,23 @@ This service provides a robust base for integration with client interfaces that 
 </br>
 
 ## 📋 Table of Contents
-- [🎯 Objective](#-objective)
-- [🧑🏻‍💻 Credits](#-credits)
+- [🎯 Objective](#objective)
+- [🧑🏻‍💻 Credits](#credits)
 - [🛠️ Technologies Used](#technologies-used)
-- [📂 Installation and Execution](#-installation-and-execution)
-- [📃 Endpoints](#-endpoints)
-- [🤝 Contributing](#-contributing)
+- [📂 Installation and Execution](#installation-and-execution)
+- [📃 Endpoints](#endpoints)
+- [🤝 Contributing](#contributing)
 - [⚖️ License](#license)
 
 </br>
 
-## 🎯 Objective
+## Objective
 
 Create a RESTful API that allows consuming and viewing data of characters from the Rick and Morty series, providing endpoints to be used in the [Angular front-end](https://github.com/Exploit-Experts/RickAndMorthy-client).
 
 </br>
 
-## 🧑🏻‍💻 Credits
+## Credits
 
 ||           |
 | ---------------- | ---------------- |
@@ -56,7 +56,7 @@ Create a RESTful API that allows consuming and viewing data of characters from t
 
 </br>
 
-## 📂 Installation and Execution
+## Installation and Execution
 
 1. Clone the repository:
 ```bash
@@ -80,11 +80,18 @@ java -jar target/rickMorty-0.0.1-SNAPSHOT.jar
 
 </br>
 
-## 📃 Endpoints
+## Endpoints
 
 - **Characters**
     - `GET /characters` - Retrieves all characters from the first page.
-    - `GET /characters?page=2` - Retrieves all characters from a specific page.
+    - `GET /characters?page=1` - Retrieves all characters from a specific page.
+    - `GET /characters?sort=name_asc` - Retrieves all characters sorted by name (`name_asc` or `name_desc`).
+    - `GET /characters?sort=status_asc` - Retrieves all characters sorted by status (`status_asc` or `status_desc`).
+    - `GET /characters?name=Rick` - Retrieves all characters with a specific name.
+    - `GET /characters?status=Alive` - Retrieves all characters with a specific status (`alive`, `dead`, or `unknown`).
+    - `GET /characters?species=Human` - Retrieves all characters with a specific species.
+    - `GET /characters?type=Clone` - Retrieves all characters with a specific type.
+    - `GET /characters?gender=Male` - Retrieves all characters with a specific gender (`female`, `male`, `genderless`, or `unknown`).
     - `GET /characters/{id}` - Retrieves a specific character by ID.
     - `GET /characters/avatar/{id}.jpeg` - Retrieves the avatar of a specific character by ID.
 - **Episodes**
@@ -104,7 +111,7 @@ java -jar target/rickMorty-0.0.1-SNAPSHOT.jar
   - `POST /favorites` - Registers a favorite and relationate with an user.
 
 
-## 📖 Swagger Documentation
+### Swagger Documentation
 
 The API documentation is available via Swagger. You can access it by navigating to the following URL after running the application: `http://localhost:8080/swagger-ui/index.html`
 
@@ -112,17 +119,16 @@ This documentation provides a detailed description of all available endpoints, t
 
 </br>
 
-## 🚧 Roadmap
-- [ ] Implement the remaining endpoints.
-- [ ] Implement the remaining CRUD operations.
-- [ ] Implement the remaining features.
-- [ ] Implement the remaining tests.
+## Contributing
+
+<p>We welcome contributions from the open-source community. If you have any ideas, bug fixes, or feature requests, feel free to submit a pull request.</p>
 
 </br>
 
-## 🤝 Contributing
-
-<p>We welcome contributions from the open-source community. If you have any ideas, bug fixes, or feature requests, feel free to submit a pull request.</p>
+## Roadmap
+- [ ] Implement the remaining endpoints.
+- [ ] Implement the remaining users and favorites operations.
+- [ ] Implement the remaining features.
 
 </br>
 
