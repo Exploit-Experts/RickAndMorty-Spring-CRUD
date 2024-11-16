@@ -79,7 +79,6 @@ public class CharacterService {
                 return c1.status().compareToIgnoreCase(c2.status());
             case "status_desc":
                 return c2.status().compareToIgnoreCase(c1.status());
-            // Add more cases as needed
             default:
                 return 0;
         }
