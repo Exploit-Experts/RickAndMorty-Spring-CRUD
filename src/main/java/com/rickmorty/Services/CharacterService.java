@@ -8,7 +8,7 @@ import com.rickmorty.DTO.InfoDto;
 import com.rickmorty.Utils.Config;
 import com.rickmorty.exceptions.CharacterNotFoundException;
 import com.rickmorty.exceptions.InvalidIdException;
-import com.rickmorty.exceptions.InvalidPageNumberException;
+import com.rickmorty.exceptions.InvalidParameterException;
 import com.rickmorty.exceptions.PageNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,7 +38,7 @@ public class CharacterService {
 
     public ApiResponseDto<CharacterDto> findAllCharacters(Integer page) {
         try {
-            Integer validacao = page;
+            if (page != null && page < 0) throw new InvalidParameterException();
             HttpClient client = HttpClient.newHttpClient();
             String urlWithPage = config.getApiBaseUrl() + "/character" + (page != null ? "?page=" + page : "");
             HttpRequest request = HttpRequest.newBuilder()
@@ -52,19 +52,20 @@ public class CharacterService {
                     new TypeReference<ApiResponseDto<CharacterDto>>() {
                     });
 
-            if (response.statusCode() != 200) throw new PageNotFoundException();
+            if (response.statusCode() == 404) throw new PageNotFoundException();
 
             return rewriteApiResponse(apiResponseDto);
         } catch (PageNotFoundException e) {
             throw new PageNotFoundException();
-        } catch (Exception e) {
-            log.error("Erro ao buscar personagens: " + e.getMessage(), e);
+        }catch (InvalidParameterException e) {
+            throw new InvalidParameterException();
+        }catch (Exception e) {
+            throw new RuntimeException();
         }
-        return null;
     }
 
-    public ResponseEntity<byte[]> findCharacterAvatar(String id) {
-        if (!id.matches("\\d+")) throw new InvalidIdException();
+    public ResponseEntity<byte[]> findCharacterAvatar(Long id) {
+        if (id == null || id < 1) throw new InvalidIdException();
         try {
             HttpClient client = HttpClient.newHttpClient();
             HttpRequest request = HttpRequest.newBuilder()
@@ -90,10 +91,8 @@ public class CharacterService {
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-    public CharacterDto findACharacterById(String id) {
-        if (!id.matches("\\d+")) {
-            throw new InvalidIdException();
-        }
+    public CharacterDto findACharacterById(Long id) {
+        if (id == null || id < 1) throw new InvalidIdException();
         try {
             HttpClient client = HttpClient.newHttpClient();
             HttpRequest request = HttpRequest.newBuilder()

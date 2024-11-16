@@ -32,19 +32,24 @@ public class GlobalExceptionHandler {
     public ResponseEntity<CustomErrorResponse> handleCharacterNotFoundException(CharacterNotFoundException ex) {
         return new ResponseEntity<>(new CustomErrorResponse(ex.getMessage()), HttpStatus.NOT_FOUND);
     }
-
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<CustomErrorResponse> handleGenericException() {
-        CustomErrorResponse error = new CustomErrorResponse("Ocorreu um erro inesperado.");
-        return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
-    }
     @ExceptionHandler(PageNotFoundException.class)
     public ResponseEntity<CustomErrorResponse> handlePageNotFound(PageNotFoundException ex) {
         return new ResponseEntity<>(new CustomErrorResponse(ex.getMessage()), HttpStatus.NOT_FOUND);
     }
+    @ExceptionHandler(InvalidParameterException.class)
+    public ResponseEntity<CustomErrorResponse> handleInvalidParameterException(InvalidParameterException ex) {
+        CustomErrorResponse error = new CustomErrorResponse(ex.getMessage());
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+    }
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
-    public ResponseEntity<CustomErrorResponse> handleMethodArgumentTypeMismatch() {
-        InvalidPageNumberException invalidPageNumberException = new InvalidPageNumberException();
-        return new ResponseEntity<>(new CustomErrorResponse(invalidPageNumberException.getMessage()), HttpStatus.BAD_REQUEST);
+    public ResponseEntity<CustomErrorResponse> handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException ex) {
+        String message = "Parâmetro " + ex.getName() + " inválido";
+        CustomErrorResponse error = new CustomErrorResponse(message);
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+    }
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<CustomErrorResponse> handleGenericException() {
+        CustomErrorResponse error = new CustomErrorResponse("Ocorreu um erro inesperado.");
+        return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }
