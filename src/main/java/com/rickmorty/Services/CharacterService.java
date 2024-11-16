@@ -6,6 +6,10 @@ import com.rickmorty.DTO.ApiResponseDto;
 import com.rickmorty.DTO.CharacterDto;
 import com.rickmorty.DTO.InfoDto;
 import com.rickmorty.Utils.Config;
+import com.rickmorty.exceptions.CharacterNotFoundException;
+import com.rickmorty.exceptions.InvalidIdException;
+import com.rickmorty.exceptions.InvalidParameterException;
+import com.rickmorty.exceptions.PageNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -31,8 +35,8 @@ public class CharacterService {
     Config config;
 
     public ApiResponseDto<CharacterDto> findAllCharacters(Integer page, String name, String status, String species, String type, String gender, String sort) {
+        if (page != null && page < 0) throw new InvalidParameterException("Page precisa ser um número positivo.");
         try {
-            if (page != null && page < 0) throw new InvalidParameterException();
             HttpClient client = HttpClient.newHttpClient();
             StringBuilder urlBuilder = new StringBuilder(config.getApiBaseUrl() + "/character?");
             if (page != null) urlBuilder.append("page=").append(page).append("&");
@@ -54,17 +58,14 @@ public class CharacterService {
                     });
 
             if (response.statusCode() == 404) throw new PageNotFoundException();
-            ApiResponseDto<CharacterDto> apiResponseDto = objectMapper.readValue(response.body(), new TypeReference<ApiResponseDto<CharacterDto>>() {});
+            apiResponseDto = objectMapper.readValue(response.body(), new TypeReference<ApiResponseDto<CharacterDto>>() {});
             return rewriteApiResponse(apiResponseDto, sort);
 
         } catch (PageNotFoundException e) {
             throw new PageNotFoundException();
-        }catch (InvalidParameterException e) {
-            throw new InvalidParameterException();
         }catch (Exception e) {
             throw new RuntimeException();
         }
-        return null;
     }
 
     private ApiResponseDto<CharacterDto> rewriteApiResponse(ApiResponseDto<CharacterDto> apiResponseDto, String sort) {
