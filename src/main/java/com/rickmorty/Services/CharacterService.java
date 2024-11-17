@@ -38,48 +38,19 @@ public class CharacterService {
     @Autowired
     Config config;
 
-    public ApiResponseDto<CharacterDto> findAllCharacters(Integer page, String name, String status, String species, String type, String gender, String sort) {
+    public ApiResponseDto<CharacterDto> findAllCharacters(Integer page, String name, LifeStatus status, Species species, String type, Gender gender, SortOrder sort) {
         if (page != null && page < 0) throw new InvalidParameterException("Page precisa ser um número positivo.");
 
         try {
             HttpClient client = HttpClient.newHttpClient();
             StringBuilder urlBuilder = new StringBuilder(config.getApiBaseUrl() + "/character?");
-            if (status != null) {
-                try {
-                    LifeStatus.valueOf(status.toUpperCase());
-                    urlBuilder.append("page=").append(page).append("&");
-                } catch (IllegalArgumentException e) {
-                    throw new InvalidParameterException("Status inválido. Valores permitidos: DEAD, ALIVE, UNKNOWN.");
-                }
-            }
-            if (sort != null) {
-                try {
-                    SortOrder.valueOf(sort.toUpperCase());
-                } catch (IllegalArgumentException e) {
-                    throw new InvalidParameterException("Ordenação inválida. Valores permitidos: NAME_ASC, NAME_DESC, STATUS_ASC, STATUS_DESC.");
-                }
-            }
-            if (species != null){
-                try {
-                    Species.valueOf(species.toUpperCase());
-                    urlBuilder.append("species=").append(species).append("&");
-                }catch (IllegalArgumentException e) {
-                    throw new InvalidParameterException("Specie inválida. Valores permitidos: HUMAN, ALIEN, HUMANOID, POOPYBUTTHOLE, UNKNOWN, ANIMAL, ROBOT, CRONENBERG");
-                }
-            }
-            if (gender != null) {
-                try {
-                    Gender.valueOf(gender.toUpperCase());
-                    urlBuilder.append("gender=").append(gender).append("&");
-                } catch (IllegalArgumentException e) {
-                    throw new InvalidParameterException("Gênero inválido. Valores permitidos: MALE, FEMALE, GENDERLESS, UNKNOWN.");
-                }
-            }
+
+            if (status != null) urlBuilder.append("page=").append(page).append("&");
+            if (species != null) urlBuilder.append("species=").append(species).append("&");
+            if (gender != null) urlBuilder.append("gender=").append(gender).append("&");
             if (type != null) urlBuilder.append("type=").append(type).append("&");
             if (name != null) urlBuilder.append("name=").append(name).append("&");
             if (status != null) urlBuilder.append("status=").append(status).append("&");
-
-
 
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(urlBuilder.toString()))
@@ -90,7 +61,7 @@ public class CharacterService {
             ObjectMapper objectMapper = new ObjectMapper();
             ApiResponseDto<CharacterDto> apiResponseDto = objectMapper.readValue(response.body(), new TypeReference<ApiResponseDto<CharacterDto>>() {});
 
-            return rewriteApiResponse(apiResponseDto, sort);
+            return rewriteApiResponse(apiResponseDto, String.valueOf(sort));
 
         } catch (InvalidParameterException e){
             throw new InvalidParameterException(e.getMessage());
