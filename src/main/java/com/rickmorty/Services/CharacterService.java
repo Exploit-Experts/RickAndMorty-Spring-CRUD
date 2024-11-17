@@ -7,6 +7,7 @@ import com.rickmorty.DTO.CharacterDto;
 import com.rickmorty.DTO.InfoDto;
 import com.rickmorty.Utils.Config;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,7 +18,6 @@ import java.net.URL;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -26,34 +26,69 @@ import java.util.stream.Collectors;
 @Service
 public class CharacterService {
 
-    private static final String URL_API = "https://rickandmortyapi.com/api";
+    @Autowired
+    Config config;
 
-    public ApiResponseDto<CharacterDto> findAllCharacters(Integer page) {
+    public ApiResponseDto<CharacterDto> findAllCharacters(Integer page, String name, String status, String species, String type, String gender, String sort) {
         try {
             HttpClient client = HttpClient.newHttpClient();
-            String urlWithPage = URL_API + "/character" + (page != null ? "?page=" + page : "");
+            StringBuilder urlBuilder = new StringBuilder(config.getApiBaseUrl() + "/character?");
+            if (page != null) urlBuilder.append("page=").append(page).append("&");
+            if (name != null) urlBuilder.append("name=").append(name).append("&");
+            if (status != null) urlBuilder.append("status=").append(status).append("&");
+            if (species != null) urlBuilder.append("species=").append(species).append("&");
+            if (type != null) urlBuilder.append("type=").append(type).append("&");
+            if (gender != null) urlBuilder.append("gender=").append(gender).append("&");
+
             HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create(urlWithPage))
+                    .uri(URI.create(urlBuilder.toString()))
                     .build();
 
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
             ObjectMapper objectMapper = new ObjectMapper();
 
-            ApiResponseDto<CharacterDto> apiResponseDto = objectMapper.readValue(response.body(),
-                    new TypeReference<ApiResponseDto<CharacterDto>>() {
-                    });
-            return rewriteApiResponse(apiResponseDto);
+            ApiResponseDto<CharacterDto> apiResponseDto = objectMapper.readValue(response.body(), new TypeReference<ApiResponseDto<CharacterDto>>() {});
+            return rewriteApiResponse(apiResponseDto, sort);
         } catch (Exception e) {
             log.error("Erro ao buscar personagens: " + e.getMessage(), e);
         }
         return null;
     }
 
+    private ApiResponseDto<CharacterDto> rewriteApiResponse(ApiResponseDto<CharacterDto> apiResponseDto, String sort) {
+        InfoDto updatedInfo = rewriteInfoDto(apiResponseDto.info());
+
+        List<CharacterDto> updatedResults = apiResponseDto.results().stream()
+                .map(this::rewriteCharacterDto)
+                .sorted((c1, c2) -> compareCharacters(c1, c2, sort))
+                .collect(Collectors.toList());
+
+        return new ApiResponseDto<>(updatedInfo, updatedResults);
+    }
+
+    private int compareCharacters(CharacterDto c1, CharacterDto c2, String sort) {
+        if (sort == null || sort.isEmpty()) {
+            return 0;
+        }
+        switch (sort.toLowerCase()) {
+            case "name_asc":
+                return c1.name().compareToIgnoreCase(c2.name());
+            case "name_desc":
+                return c2.name().compareToIgnoreCase(c1.name());
+            case "status_asc":
+                return c1.status().compareToIgnoreCase(c2.status());
+            case "status_desc":
+                return c2.status().compareToIgnoreCase(c1.status());
+            default:
+                return 0;
+        }
+    }
+
     public ResponseEntity<byte[]> findCharacterAvatar(String id) {
         try {
             HttpClient client = HttpClient.newHttpClient();
             HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create(URL_API + "/character/" + id))
+                    .uri(URI.create(config.getApiBaseUrl() + "/character/" + id))
                     .build();
 
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
@@ -75,7 +110,7 @@ public class CharacterService {
         try {
             HttpClient client = HttpClient.newHttpClient();
             HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create(URL_API + "/character/" + id))
+                    .uri(URI.create(config.getApiBaseUrl() + "/character/" + id))
                     .build();
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
             ObjectMapper objectMapper = new ObjectMapper();
@@ -88,26 +123,15 @@ public class CharacterService {
         return null;
     }
 
-    private ApiResponseDto<CharacterDto> rewriteApiResponse(ApiResponseDto<CharacterDto> apiResponseDto) {
-        InfoDto updatedInfo = rewriteInfoDto(apiResponseDto.info());
-
-        List<CharacterDto> updatedResults = new ArrayList<>();
-        for (CharacterDto character : apiResponseDto.results()) {
-            CharacterDto updatedCharacter = rewriteCharacterDto(character);
-            updatedResults.add(updatedCharacter);
-        }
-        return new ApiResponseDto<>(updatedInfo, updatedResults);
-    }
-
     private InfoDto rewriteInfoDto(InfoDto originalInfo) {
         String nextUrl = Optional.ofNullable(originalInfo.next())
-                .map(next -> next.replace("https://rickandmortyapi.com/api/character",
-                        Config.base_url + "/characters"))
+                .map(next -> next.replace(config.getApiBaseUrl() + "/character",
+                        config.getLocalBaseUrl() + "/characters"))
                 .orElse(null);
     
         String prevUrl = Optional.ofNullable(originalInfo.prev())
-                .map(prev -> prev.replace("https://rickandmortyapi.com/api/character",
-                        Config.base_url + "/characters"))
+                .map(prev -> prev.replace(config.getApiBaseUrl() + "/character",
+                        config.getLocalBaseUrl() + "/characters"))
                 .orElse(null);
     
         return new InfoDto(
@@ -125,11 +149,11 @@ public class CharacterService {
                 character.species(),
                 character.type(),
                 character.gender(),
-                character.image().replace("https://rickandmortyapi.com/api/character/",
-                        Config.base_url + "/characters/"),
+                character.image().replace(config.getApiBaseUrl() +"/character/",
+                        config.getLocalBaseUrl() + "/characters/"),
                 character.episode().stream()
-                        .map(episode -> episode.replace("https://rickandmortyapi.com/api/episode/",
-                                Config.base_url + "/episodes/"))
+                        .map(episode -> episode.replace(config.getApiBaseUrl() + "/episode/",
+                                config.getLocalBaseUrl() + "/episodes/"))
                         .collect(Collectors.toList()));
     }
 

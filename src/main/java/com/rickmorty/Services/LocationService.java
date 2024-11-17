@@ -6,11 +6,10 @@ import com.rickmorty.DTO.ApiResponseDto;
 import com.rickmorty.DTO.InfoDto;
 import com.rickmorty.DTO.LocationDto;
 import com.rickmorty.Utils.Config;
+import com.rickmorty.exceptions.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -24,51 +23,61 @@ import java.util.stream.Collectors;
 @Service
 public class LocationService {
 
-    private static final String URL_API = "https://rickandmortyapi.com/api";
+    @Autowired
+    Config config;
 
     private final ObjectMapper objectMapper;
+    private final HttpClient client;
 
     @Autowired
     public LocationService(ObjectMapper objectMapper) {
         this.objectMapper = objectMapper;
+        this.client = HttpClient.newHttpClient();
     }
 
     public ApiResponseDto findAllLocations(Integer page) {
-        try{
-            HttpClient client = HttpClient.newHttpClient();
-
+        if (page != null && page < 1) throw new InvalidParameterException("Page precisa ser um número positivo.");
+        try {
             HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create(URL_API + "/location/" + (page != null ? "?page=" +page : "")))
+                    .uri(URI.create(config.getApiBaseUrl() + "/location/?page=" + page))
                     .build();
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+            if (response.body() == null || response.body().isEmpty() || response.statusCode() == 404) throw new PageNotFoundException();
 
             ApiResponseDto<LocationDto> apiResponseDto = objectMapper.readValue(response.body(),
-                    new TypeReference<ApiResponseDto<LocationDto>>() {});
-            return RewriteApiResponse(apiResponseDto);
-        } catch (Exception e) {
-            log.error("Erro ao buscar localizações: " + e.getMessage(), e);
+                    new TypeReference<ApiResponseDto<LocationDto>>() {
+                    });
+            return rewriteApiResponse(apiResponseDto);
+        }catch (PageNotFoundException e) {
+            throw new PageNotFoundException();
+        }catch (Exception e) {
+            throw new RuntimeException(e.getMessage());
         }
-        return null;
     }
 
-    public LocationDto getLocationById(String id) {
-        try {
-            HttpClient client = HttpClient.newHttpClient();
 
+    public LocationDto getLocationById(Long id) {
+        if (id == null || id < 1) throw new InvalidIdException();
+        try {
             HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create(URL_API + "/location/" + id))
+                    .uri(URI.create(config.getApiBaseUrl() + "/location/" + id))
                     .build();
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
-            return objectMapper.readValue(response.body(), LocationDto.class);
+            if (response.body().isEmpty() || response.statusCode() == 404) throw new LocationNotFoundException("Localizações não encontradas");
+
+            LocationDto location = objectMapper.readValue(response.body(), LocationDto.class);
+            return rewriteLocationDto(location);
+        } catch (LocationNotFoundException ex) {
+            throw new LocationNotFoundException(ex.getMessage());
         } catch (Exception e) {
-            log.error("Erro ao buscar localização por id: " + e.getMessage(), e);
+            throw new RuntimeException(e.getMessage());
         }
-        return null;
     }
 
-    private ApiResponseDto<LocationDto> RewriteApiResponse(ApiResponseDto<LocationDto> apiResponseDto) {
-        InfoDto updatedInfo = RewriteInfoDto(apiResponseDto.info());
+    private ApiResponseDto<LocationDto> rewriteApiResponse(ApiResponseDto<LocationDto> apiResponseDto) {
+        InfoDto updatedInfo = rewriteInfoDto(apiResponseDto.info());
 
         List<LocationDto> updatedResults = new ArrayList<>();
         for (LocationDto location : apiResponseDto.results()) {
@@ -79,12 +88,12 @@ public class LocationService {
     }
 
 
-    private static InfoDto RewriteInfoDto(InfoDto originalInfo) {
+    private InfoDto rewriteInfoDto(InfoDto originalInfo) {
         return new InfoDto(
                 originalInfo.count(),
                 originalInfo.pages(),
-                originalInfo.next() != null ? originalInfo.next().replace("https://rickandmortyapi.com/api/location/", Config.base_url + "/locations") : null,
-                originalInfo.prev() != null ? originalInfo.prev().replace("https://rickandmortyapi.com/api/location/", Config.base_url + "/locations") : null
+                originalInfo.next() != null ? originalInfo.next().replace(config.getApiBaseUrl() + "/location/", config.getLocalBaseUrl() + "/locations") : null,
+                originalInfo.prev() != null ? originalInfo.prev().replace(config.getApiBaseUrl() + "/location/", config.getLocalBaseUrl() + "/locations") : null
         );
     }
 
@@ -95,12 +104,11 @@ public class LocationService {
                 location.type(),
                 location.dimension(),
                 location.residents().stream()
-                        .map(resident -> resident.replace("https://rickandmortyapi.com/api/character/",
-                                Config.base_url + "/characters/"))
+                        .map(resident -> resident.replace(config.getApiBaseUrl() + "/character/",
+                                config.getLocalBaseUrl() + "/characters/"))
                         .collect(Collectors.toList()),
-                location.url().replace("https://rickandmortyapi.com/api/location/", Config.base_url + "/locations/")
+                location.url().replace(config.getApiBaseUrl()+"/location/", config.getLocalBaseUrl() + "/locations/")
         );
     }
-
 
 }

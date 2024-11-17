@@ -5,6 +5,7 @@ import com.rickmorty.Models.FavoriteModel;
 import com.rickmorty.Models.UserModel;
 import com.rickmorty.Repository.FavoriteRepository;
 import com.rickmorty.Repository.UserRepository;
+import com.rickmorty.exceptions.UserNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +27,7 @@ public class FavoriteService {
     public void create(FavoriteDto favoriteDto) {
         FavoriteModel favorite;
         UserModel user = userRepository.findById(favoriteDto.userId())
-                .orElseThrow(() -> new RuntimeException("Usuario não encontrado"));
+                .orElseThrow(UserNotFoundException::new);
 
         Optional<FavoriteModel> favoriteOptional = favoriteRepository.findByApiIdAndItemType(favoriteDto.apiId(), favoriteDto.itemType());
 
