@@ -42,7 +42,4 @@ public class UserModel {
 
     public UserModel() {
     }
-    @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
-    private UserModel user;
 }
