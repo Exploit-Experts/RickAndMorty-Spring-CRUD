@@ -75,8 +75,8 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(ValidationErrorException.class)
-    public ResponseEntity<Map<String, List<String>>> handleValidationErrorException(ValidationErrorException ex) {
-        return new ResponseEntity<>(Map.of("errors", ex.getErrors()), HttpStatus.BAD_REQUEST);
+    public ResponseEntity<ValidationErrorResponse> handleValidationErrorException(ValidationErrorException ex) {
+        return new ResponseEntity<>(new ValidationErrorResponse(ex.getErrors()), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(Exception.class)

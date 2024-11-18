@@ -1,17 +1,19 @@
 package com.rickmorty.Models;
 
-public class ValidationErrorResponse {
-    private String errors;
+import java.util.List;
 
-    public ValidationErrorResponse(String errors) {
+public class ValidationErrorResponse {
+    private List<String> errors;
+
+    public ValidationErrorResponse(List<String> errors) {
         this.errors = errors;
     }
 
-    public String getErrors() {
+    public List<String> getErrors() {
         return errors;
     }
 
-    public void setErrors(String message) {
-        this.errors = message;
+    public void setErrors(List<String> errors) {
+        this.errors = errors;
     }
 }
