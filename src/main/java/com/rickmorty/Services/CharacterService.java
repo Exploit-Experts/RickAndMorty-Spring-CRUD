@@ -48,9 +48,17 @@ public class CharacterService {
             if (status != null) urlBuilder.append("page=").append(page).append("&");
             if (species != null) urlBuilder.append("species=").append(species).append("&");
             if (gender != null) urlBuilder.append("gender=").append(gender).append("&");
-            if (type != null) urlBuilder.append("type=").append(type).append("&");
-            if (name != null) urlBuilder.append("name=").append(name).append("&");
             if (status != null) urlBuilder.append("status=").append(status).append("&");
+            if (type != null){
+                type = type.replace(" ", "+");
+                urlBuilder.append("type=").append(type).append("&");
+            }
+            if (name != null){
+                name = name.replace(" ", "+");
+                urlBuilder.append("name=").append(name).append("&");
+            }
+
+            if (page != null) urlBuilder = new StringBuilder(config.getApiBaseUrl() + "/character" + (page != null ? "?page=" + page : ""));
 
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(urlBuilder.toString()))
