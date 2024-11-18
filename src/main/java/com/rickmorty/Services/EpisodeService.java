@@ -8,13 +8,11 @@ import com.rickmorty.DTO.InfoDto;
 import com.rickmorty.Utils.Config;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -30,8 +28,8 @@ public class EpisodeService {
         try {
             StringBuilder urlBuilder = new StringBuilder(config.getApiBaseUrl() + "/episode?");
             if (page != null) urlBuilder.append("page=").append(page).append("&");
-            if (name != null) urlBuilder.append("name=").append(page).append("&");
-            if (episode != null) urlBuilder.append("episode=").append(page).append("&");
+            if (name != null) urlBuilder.append("name=").append(name).append("&");
+            if (episode != null) urlBuilder.append("episode=").append(episode).append("&");
 
             HttpClient client = HttpClient.newHttpClient();
             HttpRequest request = HttpRequest.newBuilder()

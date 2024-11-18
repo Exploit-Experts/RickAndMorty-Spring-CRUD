@@ -16,7 +16,6 @@ public class EpisodeController {
     private EpisodeService episodeService;
 
     @GetMapping
-
     public ResponseEntity<ApiResponseDto<EpisodeDto>> getAllEpisodes(
         @RequestParam(required = false) Integer page,
         @RequestParam(required = false) String name,
