@@ -1,6 +1,7 @@
 package com.rickmorty.handlers;
 
 import com.rickmorty.Models.CustomErrorResponse;
+import com.rickmorty.Models.ValidationErrorResponse;
 import com.rickmorty.exceptions.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -8,14 +9,17 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.NoHandlerFoundException;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 
 @Slf4j
-@ControllerAdvice
+@RestControllerAdvice
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(UserNotFoundException.class)
@@ -70,10 +74,14 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(new CustomErrorResponse(ex.getMessage()), HttpStatus.METHOD_NOT_ALLOWED);
     }
 
+    @ExceptionHandler(ValidationErrorException.class)
+    public ResponseEntity<Map<String, List<String>>> handleValidationErrorException(ValidationErrorException ex) {
+        return new ResponseEntity<>(Map.of("errors", ex.getErrors()), HttpStatus.BAD_REQUEST);
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<CustomErrorResponse> handleException(Exception ex) {
         log.error("Um erro inesperado aconteceu" + ex.getMessage());
-
         return new ResponseEntity<>(new CustomErrorResponse("Ocorreu um erro inesperado."), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }
