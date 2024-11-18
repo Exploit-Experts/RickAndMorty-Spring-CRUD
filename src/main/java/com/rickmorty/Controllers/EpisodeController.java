@@ -16,9 +16,13 @@ public class EpisodeController {
     private EpisodeService episodeService;
 
     @GetMapping
+
     public ResponseEntity<ApiResponseDto<EpisodeDto>> getAllEpisodes(
-        @RequestParam(required = false) Integer page) {
-        ApiResponseDto<EpisodeDto> episodes = episodeService.findAllEpisodes(page);
+        @RequestParam(required = false) Integer page,
+        @RequestParam(required = false) String name,
+        @RequestParam(required = false) String episode,
+        @RequestParam(required = false) String sort) {
+        ApiResponseDto<EpisodeDto> episodes = episodeService.findAllEpisodes(page, name, episode, sort);
         return ResponseEntity.ok(episodes);
     }
 

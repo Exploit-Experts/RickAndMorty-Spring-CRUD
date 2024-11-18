@@ -26,12 +26,16 @@ public class EpisodeService {
     @Autowired
     Config config;
 
-    public ApiResponseDto<EpisodeDto> findAllEpisodes(Integer page) {
+    public ApiResponseDto<EpisodeDto> findAllEpisodes(Integer page, String name, String episode, String sort) {
         try {
+            StringBuilder urlBuilder = new StringBuilder(config.getApiBaseUrl() + "/episode?");
+            if (page != null) urlBuilder.append("page=").append(page).append("&");
+            if (name != null) urlBuilder.append("name=").append(page).append("&");
+            if (episode != null) urlBuilder.append("episode=").append(page).append("&");
+
             HttpClient client = HttpClient.newHttpClient();
-            String urlWithPage = config.getApiBaseUrl() + "/episode" + (page != null ? "?page=" + page : "");
             HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create(urlWithPage))
+                    .uri(URI.create(urlBuilder.toString()))
                     .build();
 
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
@@ -40,7 +44,7 @@ public class EpisodeService {
             ApiResponseDto<EpisodeDto> apiResponseDto = objectMapper.readValue(response.body(),
                     new TypeReference<ApiResponseDto<EpisodeDto>>() {
                     });
-            return rewriteApiResponse(apiResponseDto);
+            return rewriteApiResponse(apiResponseDto, sort);
         } catch (Exception e) {
             log.error("Erro ao buscar episódios: " + e.getMessage(), e);
         }
@@ -64,15 +68,38 @@ public class EpisodeService {
         return null;
     }
 
-    private ApiResponseDto<EpisodeDto> rewriteApiResponse(ApiResponseDto<EpisodeDto> apiResponseDto) {
+    private ApiResponseDto<EpisodeDto> rewriteApiResponse(ApiResponseDto<EpisodeDto> apiResponseDto, String sort) {
         InfoDto updatedInfo = rewriteInfoDto(apiResponseDto.info());
 
-        List<EpisodeDto> updatedResults = new ArrayList<>();
-        for (EpisodeDto episode : apiResponseDto.results()) {
-            EpisodeDto updatedEpisode = rewriteEpisodeDto(episode);
-            updatedResults.add(updatedEpisode);
-        }
+        List<EpisodeDto> updatedResults = apiResponseDto.results().stream()
+                .map(this::rewriteEpisodeDto)
+                .sorted((e1, e2) -> compareEpisodes(e1, e2, sort)) // Ordena com base no sort, se necessário
+                .collect(Collectors.toList());
+
         return new ApiResponseDto<>(updatedInfo, updatedResults);
+    }
+
+    private int compareEpisodes(EpisodeDto e1, EpisodeDto e2, String sort) {
+        if (sort == null || sort.isEmpty()) {
+            return 0;
+        }
+
+        switch (sort.toLowerCase()) {
+            case "name":
+                return e1.name().compareToIgnoreCase(e2.name());
+            case "name_desc":
+                return e2.name().compareToIgnoreCase(e1.name());
+            case "air_date":
+                return e1.releaseDate().compareTo(e2.releaseDate());
+            case "air_date_desc":
+                return e2.releaseDate().compareTo(e1.releaseDate());
+            case "episode_code":
+                return e1.episodeCode().compareTo(e2.episodeCode());
+            case "episode_code_desc":
+                return e2.episodeCode().compareTo(e1.episodeCode());
+            default:
+                return 0;
+        }
     }
 
     private InfoDto rewriteInfoDto(InfoDto originalInfo) {
