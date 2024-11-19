@@ -3,6 +3,8 @@ package com.rickmorty.Controllers;
 import com.rickmorty.DTO.ApiResponseDto;
 import com.rickmorty.DTO.LocationDto;
 import com.rickmorty.Services.LocationService;
+import com.rickmorty.enums.SortLocation;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -24,7 +26,7 @@ public class LocationController {
             @RequestParam(value = "name", required = false) String name,
             @RequestParam(value = "type", required = false) String type,
             @RequestParam(value = "dimension", required = false) String dimension,
-            @RequestParam(value = "sort", required = false) String sort) {
+            @RequestParam(value = "sort", required = false) SortLocation sort) {
         ApiResponseDto<LocationDto> locations = locationService.findAllLocations(page, name, type, dimension, sort);
         return ResponseEntity.ok(locations);
     }

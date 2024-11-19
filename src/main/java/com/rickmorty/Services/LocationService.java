@@ -16,7 +16,7 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.List;
 import java.util.stream.Collectors;
-
+import com.rickmorty.enums.SortLocation;
 
 @Slf4j
 @Service
@@ -33,7 +33,7 @@ public class LocationService {
         this.client = HttpClient.newHttpClient();
     }
 
-    public ApiResponseDto<LocationDto> findAllLocations(Integer page, String name, String type, String dimension, String sort) {
+    public ApiResponseDto<LocationDto> findAllLocations(Integer page, String name, String type, String dimension, SortLocation sort) {
         if (page != null && page < 1) throw new InvalidParameterException("Page precisa ser um número positivo.");
         try {
             StringBuilder urlBuilder = new StringBuilder(config.getApiBaseUrl() + "/location?");
@@ -52,7 +52,7 @@ public class LocationService {
             ApiResponseDto<LocationDto> apiResponseDto = objectMapper.readValue(response.body(),
                     new TypeReference<ApiResponseDto<LocationDto>>() {
                     });
-            return rewriteApiResponse(apiResponseDto, sort);
+            return rewriteApiResponse(apiResponseDto, String.valueOf(sort));  
         } catch (PageNotFoundException e) {
             throw new PageNotFoundException();
         } catch (Exception e) {
