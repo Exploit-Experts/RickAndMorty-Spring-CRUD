@@ -1,5 +1,5 @@
-
 package com.rickmorty.Repository;
+
 
 import com.rickmorty.Models.FavoriteModel;
 import com.rickmorty.enums.ItemType;
@@ -7,10 +7,12 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
 
+@Repository
 public interface FavoriteRepository  extends JpaRepository<FavoriteModel, Long> {
 
     @Query("SELECT f FROM FavoriteModel f WHERE f.apiId = :apiId AND f.itemType = :itemType")
@@ -25,4 +27,5 @@ public interface FavoriteRepository  extends JpaRepository<FavoriteModel, Long> 
 
     @Query(value = "SELECT COUNT(*) FROM user_favorites uf WHERE uf.user_id = :userId AND uf.favorite_id = :favoriteId", nativeQuery = true)
     Long existsByUserIdAndFavoriteId(@Param("userId") Long userId, @Param("favoriteId") Long favoriteId);
+
 }
