@@ -13,7 +13,7 @@ import com.rickmorty.enums.Species;
 import com.rickmorty.exceptions.CharacterNotFoundException;
 import com.rickmorty.exceptions.InvalidIdException;
 import com.rickmorty.exceptions.InvalidParameterException;
-import com.rickmorty.exceptions.PageNotFoundException;
+import com.rickmorty.exceptions.NotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -26,7 +26,6 @@ import java.net.URL;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -63,7 +62,7 @@ public class CharacterService {
                     .build();
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
-            if (response.statusCode() == 404) throw new PageNotFoundException();
+            if (response.statusCode() == 404) throw new NotFoundException();
             ObjectMapper objectMapper = new ObjectMapper();
             ApiResponseDto<CharacterDto> apiResponseDto = objectMapper.readValue(response.body(), new TypeReference<ApiResponseDto<CharacterDto>>() {});
 
@@ -71,8 +70,8 @@ public class CharacterService {
 
         } catch (InvalidParameterException e){
             throw new InvalidParameterException(e.getMessage());
-        }catch (PageNotFoundException e) {
-            throw new PageNotFoundException();
+        }catch (NotFoundException e) {
+            throw new NotFoundException();
         }catch (Exception e) {
             throw new RuntimeException();
         }
