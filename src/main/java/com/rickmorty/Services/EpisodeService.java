@@ -6,6 +6,7 @@ import com.rickmorty.DTO.ApiResponseDto;
 import com.rickmorty.DTO.EpisodeDto;
 import com.rickmorty.DTO.InfoDto;
 import com.rickmorty.Utils.Config;
+import com.rickmorty.enums.SortEpisode;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,7 +25,7 @@ public class EpisodeService {
     @Autowired
     Config config;
 
-    public ApiResponseDto<EpisodeDto> findAllEpisodes(Integer page, String name, String episode, String sort) {
+    public ApiResponseDto<EpisodeDto> findAllEpisodes(Integer page, String name, String episode, SortEpisode sort) {
         try {
             StringBuilder urlBuilder = new StringBuilder(config.getApiBaseUrl() + "/episode?");
             if (page != null) urlBuilder.append("page=").append(page).append("&");
@@ -42,7 +43,7 @@ public class EpisodeService {
             ApiResponseDto<EpisodeDto> apiResponseDto = objectMapper.readValue(response.body(),
                     new TypeReference<ApiResponseDto<EpisodeDto>>() {
                     });
-            return rewriteApiResponse(apiResponseDto, sort);
+            return rewriteApiResponse(apiResponseDto, String.valueOf(sort));
         } catch (Exception e) {
             log.error("Erro ao buscar episódios: " + e.getMessage(), e);
         }
@@ -71,7 +72,7 @@ public class EpisodeService {
 
         List<EpisodeDto> updatedResults = apiResponseDto.results().stream()
                 .map(this::rewriteEpisodeDto)
-                .sorted((e1, e2) -> compareEpisodes(e1, e2, sort)) // Ordena com base no sort, se necessário
+                .sorted((e1, e2) -> compareEpisodes(e1, e2, sort))
                 .collect(Collectors.toList());
 
         return new ApiResponseDto<>(updatedInfo, updatedResults);
@@ -87,10 +88,6 @@ public class EpisodeService {
                 return e1.name().compareToIgnoreCase(e2.name());
             case "name_desc":
                 return e2.name().compareToIgnoreCase(e1.name());
-            case "air_date":
-                return e1.releaseDate().compareTo(e2.releaseDate());
-            case "air_date_desc":
-                return e2.releaseDate().compareTo(e1.releaseDate());
             case "episode_code":
                 return e1.episodeCode().compareTo(e2.episodeCode());
             case "episode_code_desc":
