@@ -1,5 +1,6 @@
 package com.rickmorty.Services;
 import com.rickmorty.DTO.FavoriteResponseDto;
+import com.rickmorty.DTO.UserDto;
 import com.rickmorty.Models.FavoriteModel;
 import com.rickmorty.Models.UserModel;
 import com.rickmorty.Repository.FavoriteRepository;
@@ -12,7 +13,11 @@ import com.rickmorty.DTO.FavoriteDto;
 import com.rickmorty.exceptions.UserNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
+
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -34,23 +39,10 @@ public class FavoriteService {
     LocationService locationService;
 
     @Transactional
-    public void create(FavoriteDto favoriteDto) {
+    public void create(FavoriteDto favoriteDto, BindingResult result) {
+        validateFavorite(favoriteDto, result);
+
         FavoriteModel favorite;
-        if (favoriteDto.userId() == null || favoriteDto.userId() <= 0 ||
-                favoriteDto.apiId() == null || favoriteDto.apiId() <= 0) throw new InvalidIdException();
-
-        switch (favoriteDto.itemType().name().toLowerCase()){
-            case "episode":
-                if (episodeService.findEpisodeById(favoriteDto.apiId()) == null) throw new EpisodeNotFoundException();
-                break;
-            case "character":
-                if (characterService.findACharacterById(favoriteDto.apiId()) == null) throw new CharacterNotFoundException();
-                break;
-            case "location":
-                if (locationService.getLocationById(favoriteDto.apiId()) == null) throw new LocationNotFoundException("Location não encontrado para o ID");
-                break;
-        }
-
         try {
             Long id = favoriteDto.userId();
             UserModel user = userRepository.findByIdAndActive(id, 1)
@@ -69,9 +61,9 @@ public class FavoriteService {
             }
 
             Long existsFavoriteAndUserSetted = favoriteRepository.existsByUserIdAndFavoriteId(user.getId(), favorite.getId());
-            if (existsFavoriteAndUserSetted == 0) {
-                favoriteRepository.addFavoriteToUser(user.getId(), favorite.getId());
-            }
+            if (existsFavoriteAndUserSetted != 0) throw new FavoriteAlreadyExists();
+
+            favoriteRepository.addFavoriteToUser(user.getId(), favorite.getId());
         }catch (NumberFormatException e){
             throw new InvalidIdException();
         }
@@ -99,16 +91,49 @@ public class FavoriteService {
     @Transactional
     public void removeFavorite(Long userId, Long favoriteId) {
         if (userId == null || userId < 1 || favoriteId == null || favoriteId < 1) throw new InvalidParameterException("Parâmetro useId e/ou favoriteId inválido");
+
+        Optional<UserModel> user = userRepository.findByIdAndActive(userId, 1);
+        if (user.isEmpty()) throw new UserNotFoundException();
+
+        Long existsFavorite = favoriteRepository.existsByUserIdAndFavoriteId(userId, favoriteId);
+        if (existsFavorite == 0) throw new FavoriteNotFound("Favorito não cadastrado");
+
         favoriteRepository.deleteByUserIdAndFavoriteId(userId, favoriteId);
     }
 
     @Transactional
     public void removeAllFavoritesByUserId(Long userId) {
         Optional<UserModel> user = userRepository.findByIdAndActive(userId, 1);
-        if (user.isEmpty()){
-            throw new UserNotFoundException();
-        }
+        if (user.isEmpty()) throw new UserNotFoundException();
+
+        Long existsFavorite = favoriteRepository.existsByUserId(userId);
+        if (existsFavorite == 0) throw new FavoriteNotFound("O usuário não tem favoritos cadastrados");
 
         favoriteRepository.deleteAllByUserId(userId);
+    }
+
+    private void validateFavorite(FavoriteDto favoriteDto, BindingResult result) {
+        if (favoriteDto.userId() == null || favoriteDto.userId() <= 0 ||
+                favoriteDto.apiId() == null || favoriteDto.apiId() <= 0) throw new InvalidIdException();
+
+        switch (favoriteDto.itemType().name().toLowerCase()){
+            case "episode":
+                if (episodeService.findEpisodeById(favoriteDto.apiId()) == null) throw new EpisodeNotFoundException();
+                break;
+            case "character":
+                if (characterService.findACharacterById(favoriteDto.apiId()) == null) throw new CharacterNotFoundException();
+                break;
+            case "location":
+                if (locationService.getLocationById(favoriteDto.apiId()) == null) throw new LocationNotFoundException("Location não encontrado para o ID");
+                break;
+            default: throw new InvalidParameterException("itemType inválido. valores aceitos: (LOCATION, EPISODE, CHARACTER)");
+        }
+
+        if (result.hasErrors()) {
+            List<String> errors = result.getFieldErrors().stream()
+                    .map(FieldError::getDefaultMessage)
+                    .collect(Collectors.toList());
+            throw new ValidationErrorException(errors);
+        }
     }
 }

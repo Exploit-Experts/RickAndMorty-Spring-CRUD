@@ -2,6 +2,8 @@ package com.rickmorty.Controllers;
 
 import com.rickmorty.DTO.FavoriteResponseDto;
 import com.rickmorty.Services.FavoriteService;
+import jakarta.validation.Valid;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -21,8 +23,8 @@ public class FavoriteController {
     }
 
     @PostMapping
-    public ResponseEntity<Void> createFavorite(@RequestBody FavoriteDto favoriteDto) {
-        favoriteService.create(favoriteDto);
+    public ResponseEntity<Void> createFavorite(@RequestBody @Valid FavoriteDto favoriteDto, BindingResult result) {
+        favoriteService.create(favoriteDto, result);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 

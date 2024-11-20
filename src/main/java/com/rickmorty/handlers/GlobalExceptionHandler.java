@@ -61,18 +61,22 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body("A rota " + ex.getRequestURL() + " não foi encontrada.");
     }
+
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
     public ResponseEntity<CustomErrorResponse> handleHttpRequestMethodNotSupportedException(HttpRequestMethodNotSupportedException ex) {
         return new ResponseEntity<>(new CustomErrorResponse(ex.getMessage()), HttpStatus.METHOD_NOT_ALLOWED);
     }
+
     @ExceptionHandler(CharacterNotFoundException.class)
     public ResponseEntity<CustomErrorResponse> handleCharacterNotFoundException(CharacterNotFoundException ex) {
         return new ResponseEntity<>(new CustomErrorResponse(ex.getMessage()), HttpStatus.NOT_FOUND);
     }
+
     @ExceptionHandler(EpisodeNotFoundException.class)
     public ResponseEntity<CustomErrorResponse> handleEpisodeNotFoundException(EpisodeNotFoundException ex) {
         return new ResponseEntity<>(new CustomErrorResponse(ex.getMessage()), HttpStatus.NOT_FOUND);
     }
+
     @ExceptionHandler(InvalidParameterException.class)
     public ResponseEntity<CustomErrorResponse> handleInvalidParameterException(InvalidParameterException ex) {
         CustomErrorResponse error = new CustomErrorResponse(ex.getMessage());
@@ -89,6 +93,16 @@ public class GlobalExceptionHandler {
         String message = "Erro no corpo da requisição: o JSON está mal formatado ou contém valores inválidos.";
         CustomErrorResponse error = new CustomErrorResponse(message);
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(FavoriteAlreadyExists.class)
+    public ResponseEntity<CustomErrorResponse> handleFavoriteAlreadyExists(FavoriteAlreadyExists ex) {
+        return new ResponseEntity<>(new CustomErrorResponse(ex.getMessage()), HttpStatus.CONFLICT);
+    }
+
+    @ExceptionHandler(FavoriteNotFound.class)
+    public ResponseEntity<CustomErrorResponse> handleFavoriteNotFound(FavoriteNotFound ex) {
+        return new ResponseEntity<>(new CustomErrorResponse(ex.getMessage()), HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(Exception.class)

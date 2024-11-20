@@ -9,8 +9,8 @@ import jakarta.validation.constraints.NotNull;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public record FavoriteDto(
-        @JsonProperty("apiId") Long apiId,
+        @Min(value = 1, message = "{favorite.ApiIdHigherThanZero}") @JsonProperty("apiId") Long apiId,
         @JsonProperty("itemType") ItemType itemType,
-        @JsonProperty("userId") Long userId
+        @Min(value = 1, message = "{favorite.UserIdHigherThanZero}") @JsonProperty("userId") Long userId
 ) {
 }
