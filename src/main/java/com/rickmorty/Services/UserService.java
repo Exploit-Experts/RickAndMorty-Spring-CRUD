@@ -6,6 +6,9 @@ import com.rickmorty.Models.UserModel;
 import com.rickmorty.Repository.UserRepository;
 import com.rickmorty.exceptions.UserNotFoundException;
 import com.rickmorty.exceptions.ValidationErrorException;
+import com.rickmorty.exceptions.ConflictException;
+import com.rickmorty.exceptions.InvalidIdException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.BindingResult;
@@ -73,6 +76,7 @@ public class UserService {
     }
 
     public void deleteUser(Long id) {
+        if (id == null || id < 1) throw new InvalidIdException();
         Optional<UserModel> optionalUser = userRepository.findByIdAndActive(id, 1);
         if (!optionalUser.isPresent()) throw new UserNotFoundException();
 
@@ -84,7 +88,7 @@ public class UserService {
 
     public void validateFields(UserDto userDto, BindingResult result) {
         Optional<UserModel> checkEmailExists = userRepository.findByEmail(userDto.email());
-        if (checkEmailExists.isPresent()) throw new ValidationErrorException(List.of("Email já cadastrado"));
+        if (checkEmailExists.isPresent()) throw new ConflictException("Email já cadastrado");
 
         if (result.hasErrors()) {
             List<String> errors = result.getFieldErrors().stream()
@@ -97,7 +101,7 @@ public class UserService {
     public void validateFieldsPatch(UserPatchDto userPatchDto, BindingResult result) {
         if(userPatchDto.email() != null) {
             Optional<UserModel> checkEmailExists = userRepository.findByEmail(userPatchDto.email());
-            if (checkEmailExists.isPresent()) throw new ValidationErrorException(List.of("Email já cadastrado"));
+            if (checkEmailExists.isPresent()) throw new ConflictException("Email já cadastrado");
         }
 
         if (result.hasErrors()) {
