@@ -6,7 +6,6 @@ import com.rickmorty.Models.UserModel;
 import com.rickmorty.Repository.UserRepository;
 import com.rickmorty.exceptions.UserNotFoundException;
 import com.rickmorty.exceptions.ValidationErrorException;
-import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.BindingResult;
@@ -35,17 +34,19 @@ public class UserService {
         userRepository.save(userModel);
     }
 
-    public void updateUser(Long id, UserDto userDto) {
+    public void updateUser(Long id, UserDto userDto, BindingResult result) {
+        validateFields(userDto, result);
+
         Optional<UserModel> optionalUser = userRepository.findByIdAndActive(id, 1);
-        if (optionalUser.isPresent()) {
-            UserModel user = optionalUser.get();
-            user.setName(userDto.name());
-            user.setSurname(userDto.surname());
-            user.setEmail(userDto.email());
-            user.setPassword(userDto.password());
-            user.setDate_update(LocalDateTime.now());
-            userRepository.save(user);
-        }
+        if (!optionalUser.isPresent()) throw new UserNotFoundException();
+
+        UserModel user = optionalUser.get();
+        user.setName(userDto.name());
+        user.setSurname(userDto.surname());
+        user.setEmail(userDto.email());
+        user.setPassword(userDto.password());
+        user.setDate_update(LocalDateTime.now());
+        userRepository.save(user);
     }
 
     public void patchUser(Long id, UserPatchDto userPatchDto, BindingResult result) {
