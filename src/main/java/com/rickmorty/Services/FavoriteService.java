@@ -9,6 +9,9 @@ import com.rickmorty.DTO.FavoriteDto;
 import com.rickmorty.exceptions.UserNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import java.util.*;
 
 @Slf4j
@@ -16,10 +19,10 @@ import java.util.*;
 public class FavoriteService {
 
     @Autowired
-    private FavoriteRepository favoriteRepository;
+    private UserRepository userRepository;
 
     @Autowired
-    private UserRepository userRepository;
+    private FavoriteRepository favoriteRepository;
 
     @Transactional
     public void create(FavoriteDto favoriteDto) {
@@ -45,6 +48,24 @@ public class FavoriteService {
         }
     }
 
+    public List<FavoriteDto> getAllFavorites(Long userId) {
+        Optional<List<FavoriteModel>> favorites = favoriteRepository.findFavoriteByUserId(userId);
+
+        if (favorites.isPresent()) {
+            List<FavoriteDto> favoriteList = new ArrayList<>();
+            favorites.get()
+                    .forEach(favoriteModel ->
+                            favoriteList.add(new FavoriteDto(
+                                    favoriteModel.getApiId(),
+                                    favoriteModel.getItemType(),
+                                    userId
+                            ))
+                    );
+            return favoriteList;
+        }
+        return null;
+    }
+
     @Transactional
     public void removeFavorite(Long userId, Long favoriteId) {
         if (userId == null || userId < 1 || favoriteId == null || favoriteId < 1) throw new InvalidParameterException("Parâmetro useId e/ou favoriteId inválido");
@@ -54,10 +75,9 @@ public class FavoriteService {
     @Transactional
     public void removeAllFavoritesByUserId(Long userId) {
         if (!userRepository.existsById(userId)) {
-            throw new UserNotFoundException("Usuário não encontrado.");
+            throw new UserNotFoundException();
         }
 
         favoriteRepository.deleteAllByUserId(userId);
     }
-
 }
