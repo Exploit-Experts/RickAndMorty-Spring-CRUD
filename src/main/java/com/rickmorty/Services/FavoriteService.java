@@ -41,7 +41,7 @@ public class FavoriteService {
 
         switch (favoriteDto.itemType().name().toLowerCase()){
             case "episode":
-                if (episodeService.findEpisodeById(String.valueOf(favoriteDto.apiId())) == null) throw new EpisodeNotFoundException();
+                if (episodeService.findEpisodeById(favoriteDto.apiId()) == null) throw new EpisodeNotFoundException();
                 break;
             case "character":
                 if (characterService.findACharacterById(favoriteDto.apiId()) == null) throw new CharacterNotFoundException();

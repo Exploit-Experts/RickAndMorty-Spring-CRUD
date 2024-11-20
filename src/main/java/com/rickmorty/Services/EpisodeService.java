@@ -42,7 +42,10 @@ public class EpisodeService {
 
             StringBuilder urlBuilder = new StringBuilder(config.getApiBaseUrl() + "/episode?");
             if (page != null) urlBuilder.append("page=").append(page).append("&");
-            if (name != null) urlBuilder.append("name=").append(name).append("&");
+            if (name != null){
+                name = name.replace(" ", "+");
+                urlBuilder.append("name=").append(name).append("&");
+            }
             if (episode != null) urlBuilder.append("episode=").append(episode).append("&");
 
             HttpClient client = HttpClient.newHttpClient();
@@ -70,9 +73,9 @@ public class EpisodeService {
         return null;
     }
 
-    public EpisodeDto findEpisodeById(String id) {
+    public EpisodeDto findEpisodeById(Long id) {
         try {
-            if (Integer.parseInt(id) <=0 ) throw new InvalidIdException();
+            if (id == null || id < 1) throw new InvalidIdException();
             HttpClient client = HttpClient.newHttpClient();
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(config.getApiBaseUrl() + "/episode/" + id))

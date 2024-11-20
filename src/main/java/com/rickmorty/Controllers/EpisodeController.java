@@ -27,7 +27,7 @@ public class EpisodeController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<EpisodeDto> getEpisodeById(@PathVariable String id) {
+    public ResponseEntity<EpisodeDto> getEpisodeById(@PathVariable Long id) {
         EpisodeDto episode = episodeService.findEpisodeById(id);
         return new ResponseEntity<>(episode, HttpStatus.OK);
     }
