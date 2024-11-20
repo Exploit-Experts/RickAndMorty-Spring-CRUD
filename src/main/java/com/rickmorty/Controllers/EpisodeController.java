@@ -10,7 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/episodes")
+@RequestMapping("/api/v1/episodes")
 public class EpisodeController {
 
     @Autowired
