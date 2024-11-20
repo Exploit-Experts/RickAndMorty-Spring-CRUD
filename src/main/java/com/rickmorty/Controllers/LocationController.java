@@ -3,13 +3,11 @@ package com.rickmorty.Controllers;
 import com.rickmorty.DTO.ApiResponseDto;
 import com.rickmorty.DTO.LocationDto;
 import com.rickmorty.Services.LocationService;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.rickmorty.enums.SortLocation;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.io.IOException;
-import java.util.List;
 
 @RestController
 @RequestMapping("/locations")
@@ -17,7 +15,6 @@ public class LocationController {
 
     private final LocationService locationService;
 
-    @Autowired
     public LocationController(LocationService locationService) {
         this.locationService = locationService;
     }
@@ -25,8 +22,12 @@ public class LocationController {
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<ApiResponseDto<LocationDto>> getAllLocations(
-            @RequestParam(value = "page", required = false) Integer page) {
-        ApiResponseDto<LocationDto> locations = locationService.findAllLocations(page);
+            @RequestParam(value = "page", required = false) Integer page,
+            @RequestParam(value = "name", required = false) String name,
+            @RequestParam(value = "type", required = false) String type,
+            @RequestParam(value = "dimension", required = false) String dimension,
+            @RequestParam(value = "sort", required = false) SortLocation sort) {
+        ApiResponseDto<LocationDto> locations = locationService.findAllLocations(page, name, type, dimension, sort);
         return ResponseEntity.ok(locations);
     }
 
