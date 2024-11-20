@@ -23,8 +23,8 @@ public class UserController {
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<Void> update(@PathVariable Long id, @RequestBody UserDto userDto) {
-        userService.updateUser(id, userDto);
+    public ResponseEntity<Void> update(@PathVariable Long id, @RequestBody @Valid UserDto userDto, BindingResult result) {
+        userService.updateUser(id, userDto, result);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
