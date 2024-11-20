@@ -1,4 +1,5 @@
 package com.rickmorty.Services;
+import com.rickmorty.DTO.FavoriteResponseDto;
 import com.rickmorty.Models.FavoriteModel;
 import com.rickmorty.Models.UserModel;
 import com.rickmorty.Repository.FavoriteRepository;
@@ -49,14 +50,15 @@ public class FavoriteService {
         }
     }
 
-    public List<FavoriteDto> getAllFavorites(Long userId) {
+    public List<FavoriteResponseDto> getAllFavorites(Long userId) {
         Optional<List<FavoriteModel>> favorites = favoriteRepository.findFavoriteByUserId(userId);
 
         if (favorites.isPresent()) {
-            List<FavoriteDto> favoriteList = new ArrayList<>();
+            List<FavoriteResponseDto> favoriteList = new ArrayList<>();
             favorites.get()
                     .forEach(favoriteModel ->
-                            favoriteList.add(new FavoriteDto(
+                            favoriteList.add(new FavoriteResponseDto(
+                                    favoriteModel.getId(),
                                     favoriteModel.getApiId(),
                                     favoriteModel.getItemType(),
                                     userId
