@@ -3,8 +3,13 @@ package com.rickmorty.Services;
 import com.rickmorty.DTO.UserDto;
 import com.rickmorty.Models.UserModel;
 import com.rickmorty.Repository.UserRepository;
+import com.rickmorty.exceptions.InvalidInputException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PathVariable;
+
 import java.time.LocalDateTime;
 import java.util.Optional;
 
@@ -59,12 +64,23 @@ public class UserService {
     }
 
     public void deleteUser(Long id) {
+        if (id == null) {
+            throw new InvalidInputException("ID não pode ser nulo.");
+        }
+        if (id == 0) {
+            throw new InvalidInputException("ID não pode ser 0.");
+        }
+
         Optional<UserModel> optionalUser = userRepository.findByIdAndActive(id, 1);
         if (optionalUser.isPresent()) {
             UserModel userModel = optionalUser.get();
             userModel.setActive(0);
             userModel.setDeleted_at(LocalDateTime.now());
             userRepository.save(userModel);
+        } else {
+            throw new InvalidInputException("Usuário não encontrado ou já inativo.");
         }
+
     }
+
 }

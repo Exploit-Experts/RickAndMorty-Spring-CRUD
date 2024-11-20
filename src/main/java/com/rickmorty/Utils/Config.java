@@ -5,6 +5,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class Config {
+    public static CharSequence base_url;
     @Value("${api.base.url}")
     private String apiBaseUrl;
     @Value("${local.base.url}")
