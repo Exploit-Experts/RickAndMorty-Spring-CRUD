@@ -4,6 +4,7 @@ import com.rickmorty.Models.FavoriteModel;
 import com.rickmorty.Models.UserModel;
 import com.rickmorty.Repository.FavoriteRepository;
 import com.rickmorty.Repository.UserRepository;
+import com.rickmorty.exceptions.*;
 import com.rickmorty.exceptions.InvalidParameterException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -11,9 +12,6 @@ import com.rickmorty.DTO.FavoriteDto;
 import com.rickmorty.exceptions.UserNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import java.util.*;
 
 @Slf4j
@@ -21,32 +19,61 @@ import java.util.*;
 public class FavoriteService {
 
     @Autowired
+    private FavoriteRepository favoriteRepository;
+
+    @Autowired
     private UserRepository userRepository;
 
     @Autowired
-    private FavoriteRepository favoriteRepository;
+    EpisodeService episodeService;
+
+    @Autowired
+    CharacterService characterService;
+
+    @Autowired
+    LocationService locationService;
 
     @Transactional
     public void create(FavoriteDto favoriteDto) {
         FavoriteModel favorite;
-        UserModel user = userRepository.findById(favoriteDto.userId())
-                .orElseThrow(UserNotFoundException::new);
+        if (favoriteDto.userId() == null || favoriteDto.userId() <= 0 ||
+                favoriteDto.apiId() == null || favoriteDto.apiId() <= 0) throw new InvalidIdException();
 
-        Optional<FavoriteModel> favoriteOptional = favoriteRepository.findByApiIdAndItemType(favoriteDto.apiId(), favoriteDto.itemType());
-
-        if (favoriteOptional.isEmpty()) {
-            favorite = new FavoriteModel();
-            favorite.setApiId(favoriteDto.apiId());
-            favorite.setItemType(favoriteDto.itemType());
-
-            favorite = favoriteRepository.save(favorite);
-        } else {
-            favorite = favoriteOptional.get();
+        switch (favoriteDto.itemType().name().toLowerCase()){
+            case "episode":
+                if (episodeService.findEpisodeById(favoriteDto.apiId()) == null) throw new EpisodeNotFoundException();
+                break;
+            case "character":
+                if (characterService.findACharacterById(favoriteDto.apiId()) == null) throw new CharacterNotFoundException();
+                break;
+            case "location":
+                if (locationService.getLocationById(favoriteDto.apiId()) == null) throw new LocationNotFoundException("Location não encontrado para o ID");
+                break;
         }
 
-        Long existsFavoriteAndUserSetted = favoriteRepository.existsByUserIdAndFavoriteId(user.getId(), favorite.getId());
-        if (existsFavoriteAndUserSetted == 0) {
-            favoriteRepository.addFavoriteToUser(user.getId(), favorite.getId());
+        try {
+            Long id = favoriteDto.userId();
+            UserModel user = userRepository.findByIdAndActive(id, 1)
+                    .orElseThrow(UserNotFoundException::new);
+
+            Optional<FavoriteModel> favoriteOptional = favoriteRepository.findByApiIdAndItemType(favoriteDto.apiId(), favoriteDto.itemType());
+
+            if (favoriteOptional.isEmpty()) {
+                favorite = new FavoriteModel();
+                favorite.setApiId(favoriteDto.apiId());
+                favorite.setItemType(favoriteDto.itemType());
+
+                favorite = favoriteRepository.save(favorite);
+            } else {
+                favorite = favoriteOptional.get();
+            }
+
+            Long existsFavoriteAndUserSetted = favoriteRepository.existsByUserIdAndFavoriteId(user.getId(), favorite.getId());
+            if (existsFavoriteAndUserSetted == 0) {
+                favoriteRepository.addFavoriteToUser(user.getId(), favorite.getId());
+            }
+        }catch (NumberFormatException e){
+            throw new InvalidIdException();
         }
     }
 
