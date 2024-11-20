@@ -1,5 +1,6 @@
 package com.rickmorty.Controllers;
 
+import com.rickmorty.DTO.FavoriteResponseDto;
 import com.rickmorty.Models.FavoriteModel;
 import com.rickmorty.enums.ItemType;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,9 +36,10 @@ public class FavoriteController {
         favoriteService.create(favoriteDto);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
+
     @GetMapping("/{userId}")
-    public ResponseEntity<List<FavoriteDto>> getAllFavoritesByUserId(@PathVariable Long userId) {
-        List<FavoriteDto> favorites = favoriteService.getAllFavorites(userId);
+    public ResponseEntity<List<FavoriteResponseDto>> getAllFavoritesByUserId(@PathVariable Long userId) {
+        List<FavoriteResponseDto> favorites = favoriteService.getAllFavorites(userId);
         return new ResponseEntity<>(favorites, HttpStatus.OK);
     }
 
