@@ -1,17 +1,17 @@
 package com.rickmorty.Services;
-
-import com.rickmorty.DTO.FavoriteDto;
+import com.rickmorty.DTO.FavoriteResponseDto;
 import com.rickmorty.Models.FavoriteModel;
 import com.rickmorty.Models.UserModel;
 import com.rickmorty.Repository.FavoriteRepository;
 import com.rickmorty.Repository.UserRepository;
-import com.rickmorty.enums.ItemType;
 import com.rickmorty.exceptions.*;
-import jakarta.transaction.Transactional;
-import lombok.extern.slf4j.Slf4j;
+import com.rickmorty.exceptions.InvalidParameterException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
+import com.rickmorty.DTO.FavoriteDto;
+import com.rickmorty.exceptions.UserNotFoundException;
+import jakarta.transaction.Transactional;
+import lombok.extern.slf4j.Slf4j;
 import java.util.*;
 
 @Slf4j
@@ -77,14 +77,15 @@ public class FavoriteService {
         }
     }
 
-    public List<FavoriteDto> getAllFavorites(Long userId) {
+    public List<FavoriteResponseDto> getAllFavorites(Long userId) {
         Optional<List<FavoriteModel>> favorites = favoriteRepository.findFavoriteByUserId(userId);
 
         if (favorites.isPresent()) {
-            List<FavoriteDto> favoriteList = new ArrayList<>();
+            List<FavoriteResponseDto> favoriteList = new ArrayList<>();
             favorites.get()
                     .forEach(favoriteModel ->
-                            favoriteList.add(new FavoriteDto(
+                            favoriteList.add(new FavoriteResponseDto(
+                                    favoriteModel.getId(),
                                     favoriteModel.getApiId(),
                                     favoriteModel.getItemType(),
                                     userId
@@ -93,5 +94,21 @@ public class FavoriteService {
             return favoriteList;
         }
         return null;
+    }
+
+    @Transactional
+    public void removeFavorite(Long userId, Long favoriteId) {
+        if (userId == null || userId < 1 || favoriteId == null || favoriteId < 1) throw new InvalidParameterException("Parâmetro useId e/ou favoriteId inválido");
+        favoriteRepository.deleteByUserIdAndFavoriteId(userId, favoriteId);
+    }
+
+    @Transactional
+    public void removeAllFavoritesByUserId(Long userId) {
+        Optional<UserModel> user = userRepository.findByIdAndActive(userId, 1);
+        if (user.isEmpty()){
+            throw new UserNotFoundException();
+        }
+
+        favoriteRepository.deleteAllByUserId(userId);
     }
 }

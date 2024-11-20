@@ -22,6 +22,7 @@ public class FavoriteModel {
     @Enumerated(EnumType.STRING)
     private ItemType itemType;
 
-    @ManyToMany(mappedBy = "favorites")
+    @ManyToMany(mappedBy = "favorites", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private Set<UserModel> users = new HashSet<>();
+
 }
