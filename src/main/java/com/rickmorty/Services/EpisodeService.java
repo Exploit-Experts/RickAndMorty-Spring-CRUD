@@ -50,7 +50,7 @@ public class EpisodeService {
         return null;
     }
 
-    public EpisodeDto findEpisodeById(String id) {
+    public EpisodeDto findEpisodeById(Long id) {
         try {
             HttpClient client = HttpClient.newHttpClient();
             HttpRequest request = HttpRequest.newBuilder()
