@@ -99,6 +99,16 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(new CustomErrorResponse(ex.getMessage()), HttpStatus.CONFLICT);
     }
 
+    @ExceptionHandler(FavoriteAlreadyExists.class)
+    public ResponseEntity<CustomErrorResponse> handleFavoriteAlreadyExists(FavoriteAlreadyExists ex) {
+        return new ResponseEntity<>(new CustomErrorResponse(ex.getMessage()), HttpStatus.CONFLICT);
+    }
+
+    @ExceptionHandler(FavoriteNotFound.class)
+    public ResponseEntity<CustomErrorResponse> handleFavoriteNotFound(FavoriteNotFound ex) {
+        return new ResponseEntity<>(new CustomErrorResponse(ex.getMessage()), HttpStatus.NOT_FOUND);
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<CustomErrorResponse> handleException(Exception ex) {
         log.error("Um erro inesperado aconteceu" + ex.getMessage());
