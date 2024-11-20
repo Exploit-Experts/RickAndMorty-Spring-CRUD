@@ -52,10 +52,9 @@ public class LocationService {
             ApiResponseDto<LocationDto> apiResponseDto = objectMapper.readValue(response.body(),
                     new TypeReference<ApiResponseDto<LocationDto>>() {
                     });
-          
             return rewriteApiResponse(apiResponseDto, String.valueOf(sort));  
-        } catch (PageNotFoundException e) {
-            throw new PageNotFoundException();
+        } catch (NotFoundException e) {
+            throw new NotFoundException();
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage());
         }
