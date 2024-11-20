@@ -46,11 +46,18 @@ public class FavoriteService {
     }
 
     @Transactional
-    public void removeFavorite(FavoriteDto favoriteDto) {
-        Optional<FavoriteModel> favoriteModel = favoriteRepository.findByApiIdAndItemType(favoriteDto.userId(), favoriteDto.itemType());
-        if(favoriteModel.isPresent()){
-          favoriteRepository.deleteByUserIdAndFavoriteId(favoriteDto.userId(), favoriteModel.get().getId());
+    public void removeFavorite(Long userId, Long favoriteId) {
+        if (userId == null || userId < 1 || favoriteId == null || favoriteId < 1) throw new InvalidParameterException("Parâmetro useId e/ou favoriteId inválido");
+        favoriteRepository.deleteByUserIdAndFavoriteId(userId, favoriteId);
+    }
+
+    @Transactional
+    public void removeAllFavoritesByUserId(Long userId) {
+        if (!userRepository.existsById(userId)) {
+            throw new UserNotFoundException("Usuário não encontrado.");
         }
+
+        favoriteRepository.deleteAllByUserId(userId);
     }
 
 }
