@@ -14,12 +14,10 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 import org.springframework.web.servlet.NoHandlerFoundException;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
+
 
 @Slf4j
-@RestControllerAdvice
+@ControllerAdvice
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(UserNotFoundException.class)
@@ -27,14 +25,9 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(new CustomErrorResponse(ex.getMessage()), HttpStatus.NOT_FOUND);
     }
 
-    @ExceptionHandler(PageNotFoundException.class)
-    public ResponseEntity<CustomErrorResponse> handlePageNotFoundException(PageNotFoundException ex) {
-        return new ResponseEntity<>(new CustomErrorResponse(ex.getMessage()), HttpStatus.BAD_REQUEST);
-    }
-
-    @ExceptionHandler(InvalidParameterException.class)
-    public ResponseEntity<CustomErrorResponse> handleInvalidParameterException(InvalidParameterException ex) {
-        return new ResponseEntity<>(new CustomErrorResponse(ex.getMessage()), HttpStatus.BAD_REQUEST);
+    @ExceptionHandler(NotFoundException.class)
+    public ResponseEntity<CustomErrorResponse> handlePageNotFoundException(NotFoundException ex) {
+        return new ResponseEntity<>(new CustomErrorResponse(ex.getMessage()), HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(InvalidIdException.class)
@@ -74,6 +67,15 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(new CustomErrorResponse(ex.getMessage()), HttpStatus.METHOD_NOT_ALLOWED);
     }
 
+    @ExceptionHandler(CharacterNotFoundException.class)
+    public ResponseEntity<CustomErrorResponse> handleCharacterNotFoundException(CharacterNotFoundException ex) {
+        return new ResponseEntity<>(new CustomErrorResponse(ex.getMessage()), HttpStatus.NOT_FOUND);
+    }
+    @ExceptionHandler(InvalidParameterException.class)
+    public ResponseEntity<CustomErrorResponse> handleInvalidParameterException(InvalidParameterException ex) {
+        CustomErrorResponse error = new CustomErrorResponse(ex.getMessage());
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+    }
     @ExceptionHandler(ValidationErrorException.class)
     public ResponseEntity<ValidationErrorResponse> handleValidationErrorException(ValidationErrorException ex) {
         return new ResponseEntity<>(new ValidationErrorResponse(ex.getErrors()), HttpStatus.BAD_REQUEST);
@@ -82,6 +84,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<CustomErrorResponse> handleException(Exception ex) {
         log.error("Um erro inesperado aconteceu" + ex.getMessage());
+
         return new ResponseEntity<>(new CustomErrorResponse("Ocorreu um erro inesperado."), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }
