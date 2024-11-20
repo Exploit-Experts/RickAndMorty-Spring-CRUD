@@ -109,6 +109,13 @@ java -jar target/rickMorty-0.0.1-SNAPSHOT.jar
     - `DELETE /users/{id}` - _(soft delete)_ Deletes the user by ID.
 - **Favorites**
   - `POST /favorites` - Registers a favorite and relationate with an user.
+  - `GET /favorites/{userId}` - Retrieves all favorites for a specific user.
+    - Parameters:
+      - `page` (optional, default: 0) - The page number to retrieve.
+      - `size` (optional, default: 10) - The number of items per page.
+      - `sort` (optional, default: "id,asc") - Sorting criteria in the format: property,(asc|desc).
+  - `DELETE /favorites/{userId}/{favoriteId}` - Removes a specific favorite for a user.
+  - `DELETE /favorites/{userId}` - Removes all favorites for a user.
 
 
 ### Swagger Documentation
@@ -126,9 +133,9 @@ This documentation provides a detailed description of all available endpoints, t
 </br>
 
 ## Roadmap
-- [ ] Implement the remaining endpoints.
-- [ ] Implement the remaining users and favorites operations.
-- [ ] Implement the remaining features.
+- [x] Implement the remaining endpoints.
+- [x] Implement the remaining users and favorites operations.
+- [x] Implement the remaining features.
 
 </br>
 

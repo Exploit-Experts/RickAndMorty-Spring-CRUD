@@ -2,6 +2,10 @@ package com.rickmorty.Controllers;
 
 import com.rickmorty.DTO.FavoriteResponseDto;
 import com.rickmorty.Services.FavoriteService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -27,9 +31,15 @@ public class FavoriteController {
     }
 
     @GetMapping("/{userId}")
-    public ResponseEntity<List<FavoriteResponseDto>> getAllFavoritesByUserId(@PathVariable Long userId) {
-        List<FavoriteResponseDto> favorites = favoriteService.getAllFavorites(userId);
-        return new ResponseEntity<>(favorites, HttpStatus.OK);
+    public ResponseEntity<Page<FavoriteResponseDto>> getAllFavorites(
+            @PathVariable Long userId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "id,asc") String[] sort) {
+
+        Page<FavoriteResponseDto> favorites = favoriteService.getAllFavorites(userId, page, size, sort);
+
+        return ResponseEntity.ok(favorites);
     }
 
     @DeleteMapping("/{userId}/{favoriteId}")
