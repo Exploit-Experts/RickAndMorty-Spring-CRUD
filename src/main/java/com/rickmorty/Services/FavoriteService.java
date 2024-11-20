@@ -3,6 +3,7 @@ import com.rickmorty.Models.FavoriteModel;
 import com.rickmorty.Models.UserModel;
 import com.rickmorty.Repository.FavoriteRepository;
 import com.rickmorty.Repository.UserRepository;
+import com.rickmorty.exceptions.InvalidParameterException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.rickmorty.DTO.FavoriteDto;
