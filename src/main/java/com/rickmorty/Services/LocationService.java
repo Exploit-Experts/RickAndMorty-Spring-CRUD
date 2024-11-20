@@ -47,11 +47,12 @@ public class LocationService {
                     .build();
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
-            if (response.body() == null || response.body().isEmpty() || response.statusCode() == 404) throw new PageNotFoundException();
+            if (response.body() == null || response.body().isEmpty() || response.statusCode() == 404) throw new NotFoundException();
 
             ApiResponseDto<LocationDto> apiResponseDto = objectMapper.readValue(response.body(),
                     new TypeReference<ApiResponseDto<LocationDto>>() {
                     });
+          
             return rewriteApiResponse(apiResponseDto, String.valueOf(sort));  
         } catch (PageNotFoundException e) {
             throw new PageNotFoundException();

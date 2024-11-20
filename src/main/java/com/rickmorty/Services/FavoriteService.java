@@ -18,10 +18,10 @@ import java.util.*;
 public class FavoriteService {
 
     @Autowired
-    private FavoriteRepository favoriteRepository;
+    private UserRepository userRepository;
 
     @Autowired
-    private UserRepository userRepository;
+    private FavoriteRepository favoriteRepository;
 
     @Transactional
     public void create(FavoriteDto favoriteDto) {
@@ -45,5 +45,23 @@ public class FavoriteService {
         if (existsFavoriteAndUserSetted == 0) {
             favoriteRepository.addFavoriteToUser(user.getId(), favorite.getId());
         }
+    }
+
+    public List<FavoriteDto> getAllFavorites(Long userId) {
+        Optional<List<FavoriteModel>> favorites = favoriteRepository.findFavoriteByUserId(userId);
+
+        if (favorites.isPresent()) {
+            List<FavoriteDto> favoriteList = new ArrayList<>();
+            favorites.get()
+                    .forEach(favoriteModel ->
+                            favoriteList.add(new FavoriteDto(
+                                    favoriteModel.getApiId(),
+                                    favoriteModel.getItemType(),
+                                    userId
+                            ))
+                    );
+            return favoriteList;
+        }
+        return null;
     }
 }
