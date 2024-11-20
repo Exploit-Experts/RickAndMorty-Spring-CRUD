@@ -34,7 +34,6 @@ public class UserService {
         userRepository.save(userModel);
     }
 
-    public void updateUser(Long id, UserDto userDto) {
     public void updateUser(Long id, UserDto userDto, BindingResult result) {
         validateFields(userDto, result);
 
