@@ -74,12 +74,12 @@ public class UserService {
 
     public void deleteUser(Long id) {
         Optional<UserModel> optionalUser = userRepository.findByIdAndActive(id, 1);
-        if (optionalUser.isPresent()) {
-            UserModel userModel = optionalUser.get();
-            userModel.setActive(0);
-            userModel.setDeleted_at(LocalDateTime.now());
-            userRepository.save(userModel);
-        }
+        if (!optionalUser.isPresent()) throw new UserNotFoundException();
+
+        UserModel userModel = optionalUser.get();
+        userModel.setActive(0);
+        userModel.setDeleted_at(LocalDateTime.now());
+        userRepository.save(userModel);
     }
 
     public void validateFields(UserDto userDto, BindingResult result) {
