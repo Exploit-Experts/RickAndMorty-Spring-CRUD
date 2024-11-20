@@ -30,9 +30,9 @@ public class FavoriteController {
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
-    @GetMapping("/favorites")
+    @GetMapping("/{userId}")
     public ResponseEntity<Page<FavoriteResponseDto>> getAllFavorites(
-            @RequestParam Long userId,
+            @PathVariable Long userId,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "id,asc") String[] sort) {
