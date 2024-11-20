@@ -75,7 +75,8 @@ public class FavoriteService {
 
     @Transactional
     public void removeAllFavoritesByUserId(Long userId) {
-        if (!userRepository.existsById(userId)) {
+        Optional<UserModel> user = userRepository.findByIdAndActive(userId, 1);
+        if (user.isEmpty()){
             throw new UserNotFoundException();
         }
 
