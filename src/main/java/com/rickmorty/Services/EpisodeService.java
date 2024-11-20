@@ -7,6 +7,10 @@ import com.rickmorty.DTO.EpisodeDto;
 import com.rickmorty.DTO.InfoDto;
 import com.rickmorty.Utils.Config;
 import com.rickmorty.enums.SortEpisode;
+import com.rickmorty.exceptions.EpisodeNotFoundException;
+import com.rickmorty.exceptions.InvalidIdException;
+import com.rickmorty.exceptions.InvalidParameterException;
+import com.rickmorty.exceptions.NotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,6 +20,7 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.List;
 import java.util.Optional;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -26,10 +31,21 @@ public class EpisodeService {
     Config config;
 
     public ApiResponseDto<EpisodeDto> findAllEpisodes(Integer page, String name, String episode, SortEpisode sort) {
+
+        if (episode != null && !Pattern.matches("^S\\d{2}(E\\d{2})?$", episode.toUpperCase())) {
+            throw new InvalidParameterException("O cod do episode não está no formato correto. Esperado: SXXEXX");
+        }
+
         try {
+
+            if (page != null && page <= 0) throw new InvalidParameterException("parametro page incorreto, deve ser um numero inteiro positivo");
+
             StringBuilder urlBuilder = new StringBuilder(config.getApiBaseUrl() + "/episode?");
             if (page != null) urlBuilder.append("page=").append(page).append("&");
-            if (name != null) urlBuilder.append("name=").append(name).append("&");
+            if (name != null){
+                name = name.replace(" ", "+");
+                urlBuilder.append("name=").append(name).append("&");
+            }
             if (episode != null) urlBuilder.append("episode=").append(episode).append("&");
 
             HttpClient client = HttpClient.newHttpClient();
@@ -38,13 +54,20 @@ public class EpisodeService {
                     .build();
 
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            if (response.statusCode() == 404) throw new NotFoundException();
+
             ObjectMapper objectMapper = new ObjectMapper();
 
             ApiResponseDto<EpisodeDto> apiResponseDto = objectMapper.readValue(response.body(),
                     new TypeReference<ApiResponseDto<EpisodeDto>>() {
                     });
             return rewriteApiResponse(apiResponseDto, String.valueOf(sort));
-        } catch (Exception e) {
+
+        }catch (InvalidParameterException e){
+            throw new InvalidParameterException(e.getMessage());
+        } catch (NotFoundException e){
+            throw new NotFoundException();
+        }catch (Exception e) {
             log.error("Erro ao buscar episódios: " + e.getMessage(), e);
         }
         return null;
@@ -52,15 +75,24 @@ public class EpisodeService {
 
     public EpisodeDto findEpisodeById(Long id) {
         try {
+            if (id == null || id < 1) throw new InvalidIdException();
             HttpClient client = HttpClient.newHttpClient();
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(config.getApiBaseUrl() + "/episode/" + id))
                     .build();
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            if (response.statusCode() == 404) throw new EpisodeNotFoundException();
             ObjectMapper objectMapper = new ObjectMapper();
 
             EpisodeDto episode = objectMapper.readValue(response.body(), EpisodeDto.class);
             return rewriteEpisodeDto(episode);
+
+        } catch (InvalidIdException e) {
+            throw new InvalidIdException();
+        } catch (NumberFormatException e) {
+            throw new InvalidIdException();
+        } catch (EpisodeNotFoundException e) {
+            throw new EpisodeNotFoundException();
         } catch (Exception e) {
             log.error("Erro ao buscar episódio por ID: " + e.getMessage(), e);
         }
