@@ -14,10 +14,9 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-
+import com.rickmorty.enums.SortLocation;
 
 @Slf4j
 @Service
@@ -29,17 +28,22 @@ public class LocationService {
     private final ObjectMapper objectMapper;
     private final HttpClient client;
 
-    @Autowired
     public LocationService(ObjectMapper objectMapper) {
         this.objectMapper = objectMapper;
         this.client = HttpClient.newHttpClient();
     }
 
-    public ApiResponseDto findAllLocations(Integer page) {
+    public ApiResponseDto<LocationDto> findAllLocations(Integer page, String name, String type, String dimension, SortLocation sort) {
         if (page != null && page < 1) throw new InvalidParameterException("Page precisa ser um número positivo.");
         try {
+            StringBuilder urlBuilder = new StringBuilder(config.getApiBaseUrl() + "/location?");
+            if (page != null) urlBuilder.append("page=").append(page).append("&");
+            if (name != null) urlBuilder.append("name=").append(name).append("&");
+            if (type != null) urlBuilder.append("type=").append(type).append("&");
+            if (dimension != null) urlBuilder.append("dimension=").append(dimension).append("&");
+
             HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create(config.getApiBaseUrl() + "/location/?page=" + page))
+                    .uri(URI.create(urlBuilder.toString()))
                     .build();
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
@@ -48,14 +52,13 @@ public class LocationService {
             ApiResponseDto<LocationDto> apiResponseDto = objectMapper.readValue(response.body(),
                     new TypeReference<ApiResponseDto<LocationDto>>() {
                     });
-            return rewriteApiResponse(apiResponseDto);
-        }catch (NotFoundException e) {
+            return rewriteApiResponse(apiResponseDto, String.valueOf(sort));  
+        } catch (NotFoundException e) {
             throw new NotFoundException();
-        }catch (Exception e) {
+        } catch (Exception e) {
             throw new RuntimeException(e.getMessage());
         }
     }
-
 
     public LocationDto getLocationById(Long id) {
         if (id == null || id < 1) throw new InvalidIdException();
@@ -76,24 +79,45 @@ public class LocationService {
         }
     }
 
-    private ApiResponseDto<LocationDto> rewriteApiResponse(ApiResponseDto<LocationDto> apiResponseDto) {
+    private ApiResponseDto<LocationDto> rewriteApiResponse(ApiResponseDto<LocationDto> apiResponseDto, String sort) {
         InfoDto updatedInfo = rewriteInfoDto(apiResponseDto.info());
 
-        List<LocationDto> updatedResults = new ArrayList<>();
-        for (LocationDto location : apiResponseDto.results()) {
-            LocationDto updatedLocation = rewriteLocationDto(location);
-            updatedResults.add(updatedLocation);
-        }
+        List<LocationDto> updatedResults = apiResponseDto.results().stream()
+                .map(this::rewriteLocationDto)
+                .sorted((l1, l2) -> compareLocations(l1, l2, sort))
+                .collect(Collectors.toList());
+
         return new ApiResponseDto<>(updatedInfo, updatedResults);
     }
 
+    private int compareLocations(LocationDto l1, LocationDto l2, String sort) {
+        if (sort == null || sort.isEmpty()) {
+            return 0;
+        }
+        switch (sort.toLowerCase()) {
+            case "name_asc":
+                return l1.name().compareToIgnoreCase(l2.name());
+            case "name_desc":
+                return l2.name().compareToIgnoreCase(l1.name());
+            case "type_asc":
+                return l1.type().compareToIgnoreCase(l2.type());
+            case "type_desc":
+                return l2.type().compareToIgnoreCase(l1.type());
+            case "dimension_asc":
+                return l1.dimension().compareToIgnoreCase(l2.dimension());
+            case "dimension_desc":
+                return l2.dimension().compareToIgnoreCase(l1.dimension());
+            default:
+                return 0;
+        }
+    }
 
     private InfoDto rewriteInfoDto(InfoDto originalInfo) {
         return new InfoDto(
                 originalInfo.count(),
                 originalInfo.pages(),
-                originalInfo.next() != null ? originalInfo.next().replace(config.getApiBaseUrl() + "/location/", config.getLocalBaseUrl() + "/locations") : null,
-                originalInfo.prev() != null ? originalInfo.prev().replace(config.getApiBaseUrl() + "/location/", config.getLocalBaseUrl() + "/locations") : null
+                originalInfo.next() != null ? originalInfo.next().replace(config.getApiBaseUrl() + "/location", config.getLocalBaseUrl() + "/locations") : null,
+                originalInfo.prev() != null ? originalInfo.prev().replace(config.getApiBaseUrl() + "/location", config.getLocalBaseUrl() + "/locations") : null
         );
     }
 

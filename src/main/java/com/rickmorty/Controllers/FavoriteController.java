@@ -16,16 +16,14 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/favorites")
 public class FavoriteController {
-
     private final FavoriteService favoriteService;
 
-    @Autowired
     public FavoriteController(FavoriteService favoriteService) {
         this.favoriteService = favoriteService;
     }
 
     @PostMapping
-    public ResponseEntity<Void> createFavorite(@RequestBody FavoriteDto favoriteDto) {
+    public ResponseEntity<Void> createFavorite(@RequestBody FavoriteDto favoriteDto){
         favoriteService.create(favoriteDto);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
@@ -35,4 +33,3 @@ public class FavoriteController {
         return new ResponseEntity<>(favorites, HttpStatus.OK);
     }
 }
-
