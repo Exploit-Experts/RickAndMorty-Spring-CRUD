@@ -4,9 +4,14 @@ import com.rickmorty.Models.FavoriteModel;
 import com.rickmorty.Models.UserModel;
 import com.rickmorty.Repository.FavoriteRepository;
 import com.rickmorty.Repository.UserRepository;
+import com.rickmorty.enums.SortFavoriteField;
 import com.rickmorty.exceptions.*;
 import com.rickmorty.exceptions.InvalidParameterException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import com.rickmorty.DTO.FavoriteDto;
 import com.rickmorty.exceptions.UserNotFoundException;
@@ -77,24 +82,31 @@ public class FavoriteService {
         }
     }
 
-    public List<FavoriteResponseDto> getAllFavorites(Long userId) {
-        Optional<List<FavoriteModel>> favorites = favoriteRepository.findFavoriteByUserId(userId);
+    public Page<FavoriteResponseDto> getAllFavorites(Long userId, int page, int size, String[] sort) {
+        String sortField = sort[0];
+        if (!SortFavoriteField.isValid(sortField)) throw new InvalidParameterException("Campo sort inválido: " + sortField);
 
-        if (favorites.isPresent()) {
-            List<FavoriteResponseDto> favoriteList = new ArrayList<>();
-            favorites.get()
-                    .forEach(favoriteModel ->
-                            favoriteList.add(new FavoriteResponseDto(
-                                    favoriteModel.getId(),
-                                    favoriteModel.getApiId(),
-                                    favoriteModel.getItemType(),
-                                    userId
-                            ))
-                    );
-            return favoriteList;
+        Sort.Direction direction;
+        try {
+            direction = Sort.Direction.fromString(sort[1]);
+        } catch (IllegalArgumentException e) {
+            throw new InvalidParameterException("Direção de sort inválida: " + sort[1]);
         }
-        return null;
+
+        Sort sortOrder = Sort.by(direction, sortField);
+        Pageable pageable = PageRequest.of(page, size, sortOrder);
+
+        Page<FavoriteModel> favoritesPage = favoriteRepository.findFavoriteByUserId(userId, pageable);
+        if (favoritesPage.isEmpty()) throw new NotFoundException();
+
+        return favoritesPage.map(favoriteModel -> new FavoriteResponseDto(
+                favoriteModel.getId(),
+                favoriteModel.getApiId(),
+                favoriteModel.getItemType(),
+                userId
+        ));
     }
+
 
     @Transactional
     public void removeFavorite(Long userId, Long favoriteId) {
