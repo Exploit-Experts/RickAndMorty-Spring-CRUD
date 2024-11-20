@@ -1,6 +1,7 @@
 package com.rickmorty.Controllers;
 
 import com.rickmorty.DTO.UserDto;
+import com.rickmorty.DTO.UserPatchDto;
 import com.rickmorty.Services.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,8 +30,8 @@ public class UserController {
     }
 
     @PatchMapping("{id}")
-    public ResponseEntity<Void> patch(@PathVariable Long id, @RequestBody UserDto userDto) {
-        userService.patchUser(id, userDto);
+    public ResponseEntity<Void> patch(@PathVariable Long id, @RequestBody @Valid UserPatchDto userPatchDto, BindingResult result) {
+        userService.patchUser(id, userPatchDto, result);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 

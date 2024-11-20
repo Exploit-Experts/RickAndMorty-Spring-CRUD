@@ -1,8 +1,10 @@
 package com.rickmorty.Services;
 
 import com.rickmorty.DTO.UserDto;
+import com.rickmorty.DTO.UserPatchDto;
 import com.rickmorty.Models.UserModel;
 import com.rickmorty.Repository.UserRepository;
+import com.rickmorty.exceptions.UserNotFoundException;
 import com.rickmorty.exceptions.ValidationErrorException;
 import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +36,6 @@ public class UserService {
     }
 
     public void updateUser(Long id, UserDto userDto) {
-
         Optional<UserModel> optionalUser = userRepository.findByIdAndActive(id, 1);
         if (optionalUser.isPresent()) {
             UserModel user = optionalUser.get();
@@ -47,25 +48,27 @@ public class UserService {
         }
     }
 
-    public void patchUser(Long id, UserDto userDto) {
+    public void patchUser(Long id, UserPatchDto userPatchDto, BindingResult result) {
+        validateFieldsPatch(userPatchDto, result);
+
         Optional<UserModel> optionalUser = userRepository.findByIdAndActive(id, 1);
-        if (optionalUser.isPresent()) {
-            UserModel user = optionalUser.get();
-            if (userDto.name() != null) {
-                user.setName(userDto.name());
-            }
-            if (userDto.surname() != null) {
-                user.setSurname(userDto.surname());
-            }
-            if (userDto.email() != null) {
-                user.setEmail(userDto.email());
-            }
-            if (userDto.password() != null) {
-                user.setPassword(userDto.password());
-            }
-            user.setDate_update(LocalDateTime.now());
-            userRepository.save(user);
+        if (!optionalUser.isPresent()) throw new UserNotFoundException();
+
+        UserModel user = optionalUser.get();
+        if (userPatchDto.name() != null) {
+            user.setName(userPatchDto.name());
         }
+        if (userPatchDto.surname() != null) {
+            user.setSurname(userPatchDto.surname());
+        }
+        if (userPatchDto.email() != null) {
+            user.setEmail(userPatchDto.email());
+        }
+        if (userPatchDto.password() != null) {
+            user.setPassword(userPatchDto.password());
+        }
+        user.setDate_update(LocalDateTime.now());
+        userRepository.save(user);
     }
 
     public void deleteUser(Long id) {
@@ -81,6 +84,20 @@ public class UserService {
     public void validateFields(UserDto userDto, BindingResult result) {
         Optional<UserModel> checkEmailExists = userRepository.findByEmail(userDto.email());
         if (checkEmailExists.isPresent()) throw new ValidationErrorException(List.of("Email já cadastrado"));
+
+        if (result.hasErrors()) {
+            List<String> errors = result.getFieldErrors().stream()
+                    .map(FieldError::getDefaultMessage)
+                    .collect(Collectors.toList());
+            throw new ValidationErrorException(errors);
+        }
+    }
+
+    public void validateFieldsPatch(UserPatchDto userPatchDto, BindingResult result) {
+        if(userPatchDto.email() != null) {
+            Optional<UserModel> checkEmailExists = userRepository.findByEmail(userPatchDto.email());
+            if (checkEmailExists.isPresent()) throw new ValidationErrorException(List.of("Email já cadastrado"));
+        }
 
         if (result.hasErrors()) {
             List<String> errors = result.getFieldErrors().stream()
