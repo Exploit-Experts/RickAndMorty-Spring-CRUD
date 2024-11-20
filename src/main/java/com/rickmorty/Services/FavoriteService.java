@@ -45,22 +45,12 @@ public class FavoriteService {
         }
     }
 
-    public void removeFavorite(Long userId, Long favoriteId) {
-        Optional<UserModel> userOptional = userRepository.findByIdAndActive(userId,1);
-        if (userOptional.isPresent()) {
-            UserModel user = userOptional.get();
-            Optional<FavoriteModel> favoriteOptional = favoriteRepository.findById(favoriteId);
-            if (favoriteOptional.isPresent()) {
-                FavoriteModel favorite = favoriteOptional.get();
-                user.getFavorites().remove(favorite);
-                favorite.getUsers().remove(user);
-                userRepository.save(user);
-                favoriteRepository.save(favorite);
-            } else {
-                throw new RuntimeException("Favorito não encontrado.");
-            }
-        } else {
-            throw new RuntimeException("Usuário não encontrado.");
+    @Transactional
+    public void removeFavorite(FavoriteDto favoriteDto) {
+        Optional<FavoriteModel> favoriteModel = favoriteRepository.findByApiIdAndItemType(favoriteDto.userId(), favoriteDto.itemType());
+        if(favoriteModel.isPresent()){
+          favoriteRepository.deleteByUserIdAndFavoriteId(favoriteDto.userId(), favoriteModel.get().getId());
         }
     }
+
 }

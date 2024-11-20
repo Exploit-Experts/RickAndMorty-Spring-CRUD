@@ -24,10 +24,10 @@ public class FavoriteController {
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
-    @DeleteMapping("/{favoriteId}/users/{userId}")
-    public ResponseEntity<Void> removeFavorite(@PathVariable Long favoriteId, @PathVariable Long userId) {
-        favoriteService.removeFavorite(userId, favoriteId);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    @DeleteMapping
+    public ResponseEntity<String> removeFavorite(@RequestBody FavoriteDto favoriteDto) {
+        favoriteService.removeFavorite(favoriteDto);
+        return new ResponseEntity<>("Favorito removido com sucesso.", HttpStatus.NO_CONTENT);
     }
 
 }
