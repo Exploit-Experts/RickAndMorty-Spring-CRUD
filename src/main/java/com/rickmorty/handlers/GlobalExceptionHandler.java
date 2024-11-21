@@ -110,11 +110,6 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(new CustomErrorResponse(ex.getMessage()), HttpStatus.NOT_FOUND);
     }
 
-    @ExceptionHandler(NothingPatchException.class)
-    public ResponseEntity<CustomErrorResponse> handleNothingPatchException(NothingPatchException ex) {
-        return new ResponseEntity<>(new CustomErrorResponse(ex.getMessage()), HttpStatus.UNPROCESSABLE_ENTITY);
-    }
-
     @ExceptionHandler(Exception.class)
     public ResponseEntity<CustomErrorResponse> handleException(Exception ex) {
         log.error("Um erro inesperado aconteceu: " + ex.getMessage());
