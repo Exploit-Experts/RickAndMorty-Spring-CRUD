@@ -91,7 +91,7 @@ public class FavoriteService {
         if (user.isEmpty()) throw new UserNotFoundException();
 
         Page<FavoriteModel> favoritesPage = favoriteRepository.findFavoriteByUserId(userId, pageable);
-        if (favoritesPage.isEmpty()) throw new NotFoundException();
+        if (favoritesPage.isEmpty()) throw new FavoriteNotFound("O usuário não possui favoritos cadastrados");
 
         return favoritesPage.map(favoriteModel -> new FavoriteResponseDto(
                 favoriteModel.getId(),

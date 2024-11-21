@@ -30,18 +30,24 @@ public class FavoriteController {
             description = "Create a new favorite for a user",
             responses = {
                     @ApiResponse(responseCode = "201", description = "Favorite created"),
-                    @ApiResponse(responseCode = "400", description = "Invalid input",
-                                 content = @Content(mediaType = "application/json",
-                                                    examples = @ExampleObject(value = "{\"message\": \"Erro no corpo da requisição: o JSON está mal formatado ou contém valores inválidos\"}"))),
-                    @ApiResponse(responseCode = "400", description = "Invalid apiId",
-                            content = @Content(mediaType = "application/json",
-                                    examples = @ExampleObject(value = "{\"message\": \"Parâmetro apiId inválido. Deve ser um número positivo maior que zero\"}"))),
-                    @ApiResponse(responseCode = "400", description = "Invalid userId",
-                            content = @Content(mediaType = "application/json",
-                                    examples = @ExampleObject(value = "{\"message\": \"Parâmetro userId inválido. Deve ser um número positivo maior que zero\"}"))),
+                    @ApiResponse(
+                            responseCode = "400",
+                            description = "Bad request",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    examples = {
+                                            @ExampleObject(name = "Malformed JSON", description = "When the api user send a invalid json", value = "{\"message\": \"Erro no corpo da requisição: o JSON está mal formatado ou contém valores inválidos\"}"),
+                                            @ExampleObject(name = "Invalid apiId", description = "When the api user send a apiId inválid. Ex: apiId: 44a.", value = "{\"message\": \"Parâmetro apiId inválido. Deve ser um número positivo maior que zero\"}"),
+                                            @ExampleObject(name = "Invalid userId", description = "When the api user send a userId inválid", value = "{\"message\": \"Parâmetro userId inválido. Deve ser um número positivo maior que zero\"}")
+                                    }
+                            )
+                    ),
                     @ApiResponse(responseCode = "404", description = "Item not found",
                             content = @Content(mediaType = "application/json",
-                                    examples = @ExampleObject(value = "{\"message\": \"itemType(EPISODE/LOCATION/CHARACTER) não encontrado para o ID\"}"))),
+                                    examples = {
+                                            @ExampleObject(name = "itemType not found", description = "When an apiId is sent that does not exist. Ex: apiId: 1000000, itemType: \"LOCATION\"", value = "{\"message\": \"LOCATION não encontrada para o ID\"}"),
+                                            @ExampleObject(name = "User not found", value = "{\"message\": \"Usuário não encontrado\"}")
+                                    })),
                     @ApiResponse(responseCode = "409", description = "Conflict - Favorite already exists",
                                  content = @Content(mediaType = "application/json",
                                                     examples = @ExampleObject(value = "{\"message\": \"O favorito já está cadastrado\"}"))),
@@ -59,12 +65,14 @@ public class FavoriteController {
                     @ApiResponse(responseCode = "400", description = "Invalid parameter. Ex: send a letter in userId",
                             content = @Content(mediaType = "application/json",
                                     examples = @ExampleObject(value = "{\"message\": \"Parâmetro userId inválido.\"}"))),
-                    @ApiResponse(responseCode = "404", description = "Favorites not found",
-                                 content = @Content(mediaType = "application/json",
-                                                    examples = @ExampleObject(value = "{\"message\": \"Não encontrado\"}"))),
-                    @ApiResponse(responseCode = "404", description = "User not found",
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "NOT FOUND",
                             content = @Content(mediaType = "application/json",
-                                    examples = @ExampleObject(value = "{\"message\": \"Usuário não encontrado\"}"))),
+                                    examples = {
+                                        @ExampleObject(name = "User not found", value = "{\"message\": \"Usuário não encontrado\"}"),
+                                        @ExampleObject(name = "User hasn't favorites", value = "{\"message\": \"O usuário não tem favoritos cadastrados\"}")
+                                    })),
             })
     @GetMapping("/{userId}")
     public ResponseEntity<Page<FavoriteResponseDto>> getAllFavorites(
@@ -82,41 +90,43 @@ public class FavoriteController {
             description = "Remove a specific favorite for a user by user ID and favorite ID",
             responses = {
                     @ApiResponse(responseCode = "204", description = "Favorite removed"),
-                    @ApiResponse(responseCode = "400", description = "Invalid parameter. Ex: send a letter in userId",
+                    @ApiResponse(responseCode = "400", description = "BAD REQUEST",
                             content = @Content(mediaType = "application/json",
-                                    examples = @ExampleObject(value = "{\"message\": \"Parâmetro userId inválido.\"}"))),
-                    @ApiResponse(responseCode = "404", description = "Favorite not found", 
+                                    examples = {
+                                        @ExampleObject(name = "Inválid parameter", description = "When send a inválid parameter. Ex: user: 1aaa", value = "{\"message\": \"Parâmetro userId inválido.\"}"),
+                                        @ExampleObject(name = "Inválid direction", value = "{\"message\": \"Direção de sort inválida\"}"),
+                                        @ExampleObject(name = "Inválid sort field", value = "{\"message\": \"Campo sort inválido\"}")
+                                    })),
+                    @ApiResponse(responseCode = "404", description = "NOT FOUND",
                                  content = @Content(mediaType = "application/json", 
-                                                    examples = @ExampleObject(value = "{\"message\": \"Favorito não encontrado\"}"))),
-                    @ApiResponse(responseCode = "404", description = "User not found",
-                            content = @Content(mediaType = "application/json",
-                                    examples = @ExampleObject(value = "{\"message\": \"Usuário não encontrado\"}"))),
-            })
+                                                    examples = {
+                                                            @ExampleObject(name = "User not found", value = "{\"message\": \"Usuário não encontrado\"}"),
+                                                            @ExampleObject(name = "Favorite not found", value = "{\"message\": \"Favorito não cadastrado\"}")
+                                                    })),
+        })
     @DeleteMapping("/{userId}/{favoriteId}")
     public ResponseEntity<String> removeFavorite(@PathVariable Long userId, @PathVariable Long favoriteId) {
         favoriteService.removeFavorite(userId, favoriteId);
-        return new ResponseEntity<>("Favorito removido com sucesso.", HttpStatus.NO_CONTENT);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     @Operation(summary = "Remove all favorites for a user",
             description = "Remove all favorites for a user by user ID",
             responses = {
-                    @ApiResponse(responseCode = "204", description = "All favorites removed",
-                    content = @Content(mediaType = "application/json", 
-                                                    examples = @ExampleObject(value = "{\"message\": \"Todos os favoritos do usuário foram removidos com sucesso.\"}"))),
+                    @ApiResponse(responseCode = "204", description = "All favorites removed"),
                     @ApiResponse(responseCode = "400", description = "Invalid parameter. Ex: send a letter in userId",
                             content = @Content(mediaType = "application/json",
                                     examples = @ExampleObject(value = "{\"message\": \"Parâmetro userId inválido.\"}"))),
-                    @ApiResponse(responseCode = "404", description = "Favorites not found", 
-                                 content = @Content(mediaType = "application/json", 
-                                                    examples = @ExampleObject(value = "{\"message\": \"O usuário não tem favoritos cadastrados\"}"))),
                     @ApiResponse(responseCode = "404", description = "User not found",
                             content = @Content(mediaType = "application/json",
-                                    examples = @ExampleObject(value = "{\"message\": \"Usuário não encontrado\"}"))),
+                                    examples = {
+                                        @ExampleObject(name = "User not found", value = "{\"message\": \"Usuário não encontrado\"}"),
+                                        @ExampleObject(name = "User hasn't favorites", value = "{\"message\": \"O usuário não tem favoritos cadastrados\"}")
+                                    })),
             })
     @DeleteMapping("/{userId}")
     public ResponseEntity<String> removeFavoritesByUserId(@PathVariable Long userId) {
         favoriteService.removeAllFavoritesByUserId(userId);
-        return new ResponseEntity<>("Todos os favoritos do usuário foram removidos com sucesso.", HttpStatus.NO_CONTENT);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }
