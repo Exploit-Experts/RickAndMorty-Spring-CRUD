@@ -57,7 +57,7 @@ public class EpisodeController {
                                  content = @Content(mediaType = "application/json", 
                                                     examples = {
                                                         @ExampleObject(name="InvalidParameter", value = "{\"message\": \"Parâmetro id inválido\"}"),
-                                                        @ExampleObject(name="InvalidID", value = "{\"message\": \"ID enviado inválido, o id deve ser um número válido e positivo\"}")
+                                                        @ExampleObject(name="InvalidID", value = "{\"message\": \"ID enviado inválido, o id deve ser um número inteiro maior ou igual a 1\"}")
                                                     }))
             })
     @GetMapping("/{id}")

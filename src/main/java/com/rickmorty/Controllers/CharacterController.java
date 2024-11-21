@@ -56,7 +56,7 @@ public class CharacterController {
                         @ApiResponse(responseCode = "404", description = "Character not found", content = @Content(mediaType = "application/json", examples = @ExampleObject(value = "{\"message\": \"Character não encontrado para o ID\"}"))),
                         @ApiResponse(responseCode = "400", description = "Invalid ID supplied", content = @Content(mediaType = "application/json", examples = {
                                 @ExampleObject(name="InvalidParameter", value = "{\"message\": \"Parâmetro id inválido\"}"),
-                                @ExampleObject(name="InvalidID", value = "{\"message\": \"ID enviado inválido, o id deve ser um número válido e positivo\"}")
+                                @ExampleObject(name="InvalidID", value = "{\"message\": \"ID enviado inválido, o id deve ser um número inteiro maior ou igual a 1\"}")
                         })),
         })
         @GetMapping("/{id}")
@@ -70,7 +70,7 @@ public class CharacterController {
                         @ApiResponse(responseCode = "404", description = "Avatar not found", content = @Content(mediaType = "application/json", examples = @ExampleObject(value = "{\"message\": \"Character não encontrado para o ID\"}"))),
                         @ApiResponse(responseCode = "400", description = "Invalid ID supplied", content = @Content(mediaType = "application/json", examples = {
                                 @ExampleObject(name="InvalidParameter", value = "{\"message\": \"Parâmetro id inválido\"}"),
-                                @ExampleObject(name="InvalidID", value = "{\"message\": \"ID enviado inválido, o id deve ser um número válido e positivo\"}")
+                                @ExampleObject(name="InvalidID", value = "{\"message\": \"ID enviado inválido, o id deve ser um número inteiro maior ou igual a 1\"}")
                         }))
         })
         @GetMapping("/avatar/{id}.jpeg")

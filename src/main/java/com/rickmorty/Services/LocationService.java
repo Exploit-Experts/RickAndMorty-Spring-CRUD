@@ -68,7 +68,7 @@ public class LocationService {
                     .build();
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
-            if (response.body().isEmpty() || response.statusCode() == 404) throw new LocationNotFoundException("Localizações não encontradas");
+            if (response.body().isEmpty() || response.statusCode() == 404) throw new LocationNotFoundException("Localização não encontrada");
 
             LocationDto location = objectMapper.readValue(response.body(), LocationDto.class);
             return rewriteLocationDto(location);

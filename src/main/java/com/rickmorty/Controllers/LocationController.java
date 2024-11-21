@@ -48,10 +48,10 @@ public class LocationController {
 
     @Operation(summary = "Get location by ID", description = "Get a specific location by its ID", responses = {
             @ApiResponse(responseCode = "200", description = "Location found"),
-            @ApiResponse(responseCode = "404", description = "Location not found", content = @Content(mediaType = "application/json", examples = @ExampleObject(value = "{\"message\": \"Localizações não encontradas\"}"))),
+            @ApiResponse(responseCode = "404", description = "Location not found", content = @Content(mediaType = "application/json", examples = @ExampleObject(value = "{\"message\": \"Localização não encontrada\"}"))),
             @ApiResponse(responseCode = "400", description = "Invalid ID supplied", content = @Content(mediaType = "application/json", examples = {
                     @ExampleObject(name = "InvalidParameter", value = "{\"message\": \"Parâmetro id inválido\"}"),
-                    @ExampleObject(name = "InvalidID", value = "{\"message\": \"ID enviado inválido, o id deve ser um número válido e positivo\"}")
+                    @ExampleObject(name = "InvalidID", value = "{\"message\": \"ID enviado inválido, o id deve ser um número inteiro maior ou igual a 1\"}")
             })),
     })
     @GetMapping("/{id}")
