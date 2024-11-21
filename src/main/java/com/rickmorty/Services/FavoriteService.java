@@ -1,11 +1,10 @@
 package com.rickmorty.Services;
 import com.rickmorty.DTO.FavoriteResponseDto;
-import com.rickmorty.DTO.UserDto;
 import com.rickmorty.Models.FavoriteModel;
 import com.rickmorty.Models.UserModel;
 import com.rickmorty.Repository.FavoriteRepository;
 import com.rickmorty.Repository.UserRepository;
-import com.rickmorty.enums.SortFavoriteField;
+import com.rickmorty.enums.SortFavorite;
 import com.rickmorty.exceptions.*;
 import com.rickmorty.exceptions.InvalidParameterException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -74,22 +73,19 @@ public class FavoriteService {
         }
     }
 
-    public Page<FavoriteResponseDto> getAllFavorites(Long userId, int page, int size, String[] sort) {
-        String sortField = sort[0];
-        if (!SortFavoriteField.isValid(sortField)) throw new InvalidParameterException("Campo sort inválido: " + sortField);
-
+    public Page<FavoriteResponseDto> getAllFavorites(Long userId, int page, SortFavorite sort) {
         Sort.Direction direction;
         try {
-            direction = Sort.Direction.fromString(sort[1]);
+            direction = Sort.Direction.fromString(sort.toString().toUpperCase());
         } catch (IllegalArgumentException e) {
-            throw new InvalidParameterException("Direção de sort inválida: " + sort[1]);
+            throw new InvalidParameterException("Direção de sort inválida: " + sort);
         }
 
-        Sort sortOrder = Sort.by(direction, sortField);
-        Pageable pageable = PageRequest.of(page, size, sortOrder);
+        Sort sortOrder = Sort.by(direction, "id");
+        Pageable pageable = PageRequest.of(page, 10, sortOrder);
 
         Page<FavoriteModel> favoritesPage = favoriteRepository.findFavoriteByUserId(userId, pageable);
-        if (favoritesPage.isEmpty()) throw new NotFoundException();
+        if (favoritesPage.isEmpty()) throw new FavoriteNotFound("Favoritos não encontrados");
 
         return favoritesPage.map(favoriteModel -> new FavoriteResponseDto(
                 favoriteModel.getId(),
@@ -98,7 +94,6 @@ public class FavoriteService {
                 userId
         ));
     }
-
 
     @Transactional
     public void removeFavorite(Long userId, Long favoriteId) {

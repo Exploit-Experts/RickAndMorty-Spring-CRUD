@@ -111,7 +111,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<CustomErrorResponse> handleException(Exception ex) {
-        log.error("Um erro inesperado aconteceu" + ex.getMessage());
+        log.error("Um erro inesperado aconteceu: " + ex.getMessage());
         return new ResponseEntity<>(new CustomErrorResponse("Ocorreu um erro inesperado."), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }
