@@ -12,6 +12,10 @@ import com.rickmorty.DTO.FavoriteDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
 
 @RestController
 @RequestMapping("/api/v1/favorites")
@@ -22,12 +26,31 @@ public class FavoriteController {
         this.favoriteService = favoriteService;
     }
 
+    @Operation(summary = "Create a new favorite",
+            description = "Create a new favorite for a user",
+            responses = {
+                    @ApiResponse(responseCode = "201", description = "Favorite created"),
+                    @ApiResponse(responseCode = "400", description = "Invalid input", 
+                                 content = @Content(mediaType = "application/json", 
+                                                    examples = @ExampleObject(value = "{\"message\": \"Erro no corpo da requisição: o JSON está mal formatado ou contém valores inválidos\"}"))),
+                    @ApiResponse(responseCode = "409", description = "Conflict - Favorite already exists", 
+                                 content = @Content(mediaType = "application/json", 
+                                                    examples = @ExampleObject(value = "{\"message\": \"O favorito já está cadastrado\"}"))),
+            })
     @PostMapping
     public ResponseEntity<Void> createFavorite(@RequestBody @Valid FavoriteDto favoriteDto, BindingResult result) {
         favoriteService.create(favoriteDto, result);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
+    @Operation(summary = "Get all favorites for a user",
+            description = "Retrieve all favorites for a specific user",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Favorites found"),
+                    @ApiResponse(responseCode = "404", description = "Favorites not found", 
+                                 content = @Content(mediaType = "application/json", 
+                                                    examples = @ExampleObject(value = "{\"message\": \"Não encontrado\"}"))),
+            })
     @GetMapping("/{userId}")
     public ResponseEntity<Page<FavoriteResponseDto>> getAllFavorites(
             @PathVariable Long userId,
@@ -40,12 +63,30 @@ public class FavoriteController {
         return ResponseEntity.ok(favorites);
     }
 
+    @Operation(summary = "Remove a specific favorite for a user",
+            description = "Remove a specific favorite for a user by user ID and favorite ID",
+            responses = {
+                    @ApiResponse(responseCode = "204", description = "Favorite removed"),
+                    @ApiResponse(responseCode = "404", description = "Favorite not found", 
+                                 content = @Content(mediaType = "application/json", 
+                                                    examples = @ExampleObject(value = "{\"message\": \"Favorito não encontrado\"}"))),
+            })
     @DeleteMapping("/{userId}/{favoriteId}")
     public ResponseEntity<String> removeFavorite(@PathVariable Long userId, @PathVariable Long favoriteId) {
         favoriteService.removeFavorite(userId, favoriteId);
         return new ResponseEntity<>("Favorito removido com sucesso.", HttpStatus.NO_CONTENT);
     }
 
+    @Operation(summary = "Remove all favorites for a user",
+            description = "Remove all favorites for a user by user ID",
+            responses = {
+                    @ApiResponse(responseCode = "204", description = "All favorites removed",
+                    content = @Content(mediaType = "application/json", 
+                                                    examples = @ExampleObject(value = "{\"message\": \"Todos os favoritos do usuário foram removidos com sucesso.\"}"))),
+                    @ApiResponse(responseCode = "404", description = "Favorites not found", 
+                                 content = @Content(mediaType = "application/json", 
+                                                    examples = @ExampleObject(value = "{\"message\": \"O usuário não tem favoritos cadastrados\"}"))),
+            })
     @DeleteMapping("/{userId}")
     public ResponseEntity<String> removeFavoritesByUserId(@PathVariable Long userId) {
         favoriteService.removeAllFavoritesByUserId(userId);
