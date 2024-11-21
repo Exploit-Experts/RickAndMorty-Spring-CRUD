@@ -69,7 +69,7 @@ public class UserService {
             user.setSurname(userPatchDto.surname());
             isUpdated = true;
         }
-        if (!userPatchDto.email().isBlank()) {
+        if (userPatchDto.email() != null) {
             user.setEmail(userPatchDto.email());
             isUpdated = true;
         }
@@ -108,12 +108,21 @@ public class UserService {
     }
 
     public void validateFieldsPatch(UserPatchDto userPatchDto, BindingResult result) {
+        if (userPatchDto.name() != null && userPatchDto.name().isBlank()) {
+            throw new ValidationErrorException(List.of("Nome não pode estar vazio"));
+        }
+        if (userPatchDto.surname() != null && userPatchDto.surname().isBlank()) {
+            throw new ValidationErrorException(List.of("Sobrenome não pode estar vazio"));
+        }
         if (userPatchDto.email() != null) {
             if (userPatchDto.email().isBlank()) {
                 throw new ValidationErrorException(List.of("Email não pode estar vazio"));
             }
             Optional<UserModel> checkEmailExists = userRepository.findByEmail(userPatchDto.email());
             if (checkEmailExists.isPresent()) throw new ConflictException("Email já cadastrado");
+        }
+        if (userPatchDto.password() != null && userPatchDto.password().isBlank()) {
+            throw new ValidationErrorException(List.of("Senha não pode estar vazia"));
         }
 
         if (result.hasErrors()) {
