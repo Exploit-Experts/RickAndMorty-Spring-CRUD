@@ -84,6 +84,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(ValidationErrorException.class)
     public ResponseEntity<ValidationErrorResponse> handleValidationErrorException(ValidationErrorException ex) {
+        log.error("Erro de validação: " + ex.getErrors());
         return new ResponseEntity<>(new ValidationErrorResponse(ex.getErrors()), HttpStatus.BAD_REQUEST);
     }
 

@@ -59,20 +59,29 @@ public class UserService {
         if (!optionalUser.isPresent()) throw new UserNotFoundException();
 
         UserModel user = optionalUser.get();
+        boolean isUpdated = false;
+
         if (userPatchDto.name() != null) {
             user.setName(userPatchDto.name());
+            isUpdated = true;
         }
         if (userPatchDto.surname() != null) {
             user.setSurname(userPatchDto.surname());
+            isUpdated = true;
         }
         if (userPatchDto.email() != null) {
             user.setEmail(userPatchDto.email());
+            isUpdated = true;
         }
         if (userPatchDto.password() != null) {
             user.setPassword(userPatchDto.password());
+            isUpdated = true;
         }
-        user.setDate_update(LocalDateTime.now());
-        userRepository.save(user);
+
+        if (isUpdated) {
+            user.setDate_update(LocalDateTime.now());
+            userRepository.save(user);
+        }
     }
 
     public void deleteUser(Long id) {
@@ -99,9 +108,21 @@ public class UserService {
     }
 
     public void validateFieldsPatch(UserPatchDto userPatchDto, BindingResult result) {
-        if(userPatchDto.email() != null) {
+        if (userPatchDto.name() != null && userPatchDto.name().isBlank()) {
+            throw new ValidationErrorException(List.of("Nome não pode estar vazio"));
+        }
+        if (userPatchDto.surname() != null && userPatchDto.surname().isBlank()) {
+            throw new ValidationErrorException(List.of("Sobrenome não pode estar vazio"));
+        }
+        if (userPatchDto.email() != null) {
+            if (userPatchDto.email().isBlank()) {
+                throw new ValidationErrorException(List.of("Email não pode estar vazio"));
+            }
             Optional<UserModel> checkEmailExists = userRepository.findByEmail(userPatchDto.email());
             if (checkEmailExists.isPresent()) throw new ConflictException("Email já cadastrado");
+        }
+        if (userPatchDto.password() != null && userPatchDto.password().isBlank()) {
+            throw new ValidationErrorException(List.of("Senha não pode estar vazia"));
         }
 
         if (result.hasErrors()) {
