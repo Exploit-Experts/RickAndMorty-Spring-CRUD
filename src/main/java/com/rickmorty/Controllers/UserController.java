@@ -25,9 +25,15 @@ public class UserController {
             description = "Create a new user with the provided details",
             responses = {
                     @ApiResponse(responseCode = "201", description = "User created"),
-                    @ApiResponse(responseCode = "400", description = "Invalid input", 
-                                 content = @Content(mediaType = "application/json", 
-                                                    examples = @ExampleObject(value = "{\"errors\": \"[]\"}"))),
+                    @ApiResponse(responseCode = "400", description = "Incorrect data submission",
+                                 content = @Content(mediaType = "application/json",
+                                         examples = { @ExampleObject(name = "Invalid name", value = "{\"errors\": [\"O nome é obrigatório\", \"O nome deve ter entre 3 e 50 caracteres.\"]}"),
+                                             @ExampleObject(name = "Invalid surname", value = "{\"errors\": [\"O sobrenome é obrigatório\", \"O sobrenome deve ter entre 3 e 50 caracteres.\"]}"),
+                                             @ExampleObject(name = "Invalid email", value = "{\"errors\": [\"O e-mail é obrigatório\", \"Formato de e-mail inválido.\"]}"),
+                                             @ExampleObject(name = "Invalid password", value = "{\"errors\": [\"A senha é obrigatória\", \"A senha deve ter pelo menos 6 caracteres.\"]}")
+                                            }
+                                 )
+                    ),
                     @ApiResponse(responseCode = "409", description = "Conflict - Email already exists", 
                                  content = @Content(mediaType = "application/json", 
                                                     examples = @ExampleObject(value = "{\"message\": \"Email já cadastrado\"}"))),
@@ -42,6 +48,19 @@ public class UserController {
             description = "Update an existing user with the provided details",
             responses = {
                     @ApiResponse(responseCode = "204", description = "User updated"),
+                    @ApiResponse(responseCode = "400", description = "Incorrect data submission",
+
+                                    content = @Content(mediaType = "application/json",
+                                    examples = {
+                                            @ExampleObject(name = "Zero ID sent as a parameter", value = "{\"message\": \"ID enviado inválido, o id deve ser um número válido e positivo\"}"),
+                                            @ExampleObject(name = "Invalid parameter", value = "{\"message\": \"Parâmetro id inválido\"}"),
+                                            @ExampleObject(name = "Invalid name", value = "{\"errors\": [\"O nome é obrigatório\", \"O nome deve ter entre 3 e 50 caracteres.\"]}"),
+                                            @ExampleObject(name = "Invalid surname", value = "{\"errors\": [\"O sobrenome é obrigatório\", \"O sobrenome deve ter entre 3 e 50 caracteres.\"]}"),
+                                            @ExampleObject(name = "Invalid email", value = "{\"errors\": [\"O e-mail é obrigatório\", \"Formato de e-mail inválido.\"]}"),
+                                            @ExampleObject(name = "Invalid password", value = "{\"errors\": [\"A senha é obrigatória\", \"A senha deve ter pelo menos 6 caracteres.\"]}")
+                                        }
+                                    )
+                    ),
                     @ApiResponse(responseCode = "404", description = "User not found", 
                                  content = @Content(mediaType = "application/json", 
                                                     examples = @ExampleObject(value = "{\"message\": \"Usuário não encontrado\"}"))),
@@ -59,6 +78,18 @@ public class UserController {
             description = "Patch an existing user with the provided details",
             responses = {
                     @ApiResponse(responseCode = "204", description = "User patched"),
+                    @ApiResponse(responseCode = "400", description = "Incorrect data submission",
+                            content = @Content(mediaType = "application/json",
+                                    examples = {@ExampleObject(name = "Zero ID sent as a parameter", value = "{\"message\": \"ID enviado inválido, o id deve ser um número inteiro maior ou igual a 1\"}"),
+                                            @ExampleObject(name = "Invalid parameter", value = "{\"message\": \"Parâmetro id inválido\"}"),
+                                            @ExampleObject(name = "Invalid name", value = "{\"errors\": [\"Nome não pode estar vazio\", \"O nome deve ter entre 3 e 50 caracteres.\"]}"),
+                                            @ExampleObject(name = "Invalid surname", value = "{\"errors\": [\"Sobrenome não pode estar vazio\", \"O sobrenome deve ter entre 3 e 50 caracteres.\"]}"),
+                                            @ExampleObject(name = "Invalid email", value = "{\"errors\": [\"Email não pode estar vazio\", \"Formato de e-mail inválido.\"]}"),
+                                            @ExampleObject(name = "Invalid password", value = "{\"errors\": [\"Senha não pode estar vazia \", \"A senha deve ter pelo menos 6 caracteres.\"]}")
+                                    }
+                            )
+                    ),
+
                     @ApiResponse(responseCode = "404", description = "User not found", 
                                  content = @Content(mediaType = "application/json", 
                                                     examples = @ExampleObject(value = "{\"message\": \"Usuário não encontrado\"}"))),
@@ -76,6 +107,11 @@ public class UserController {
             description = "Delete a user by its ID",
             responses = {
                     @ApiResponse(responseCode = "204", description = "User deleted"),
+                    @ApiResponse(responseCode = "400", description = "Invalid parameter",
+                            content = @Content(mediaType = "application/json",
+                                    examples = {@ExampleObject(name = "Zero ID sent as a parameter", value = "{\"message\": \"ID enviado inválido, o id deve ser um número válido e positivo\"}"),
+                                                @ExampleObject(name = "Invalid parameter", value = "{\"message\": \"Parâmetro id inválido\"}")})),
+
                     @ApiResponse(responseCode = "404", description = "User not found", 
                                  content = @Content(mediaType = "application/json", 
                                                     examples = @ExampleObject(value = "{\"message\": \"Usuário não encontrado\"}"))),
