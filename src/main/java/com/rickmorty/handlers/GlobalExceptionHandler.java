@@ -84,6 +84,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(ValidationErrorException.class)
     public ResponseEntity<ValidationErrorResponse> handleValidationErrorException(ValidationErrorException ex) {
+        log.error("Erro de validação: " + ex.getErrors());
         return new ResponseEntity<>(new ValidationErrorResponse(ex.getErrors()), HttpStatus.BAD_REQUEST);
     }
 
@@ -111,7 +112,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<CustomErrorResponse> handleException(Exception ex) {
-        log.error("Um erro inesperado aconteceu" + ex.getMessage());
+        log.error("Um erro inesperado aconteceu: " + ex.getMessage());
         return new ResponseEntity<>(new CustomErrorResponse("Ocorreu um erro inesperado."), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }
