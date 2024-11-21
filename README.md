@@ -85,22 +85,33 @@ java -jar target/rickMorty-0.0.1-SNAPSHOT.jar
 - **Characters**
     - `GET /characters` - Retrieves all characters from the first page.
     - `GET /characters?page=1` - Retrieves all characters from a specific page.
-    - `GET /characters?sort=name_asc` - Retrieves all characters sorted by name (`name_asc` or `name_desc`).
-    - `GET /characters?sort=status_asc` - Retrieves all characters sorted by status (`status_asc` or `status_desc`).
+    - `GET /characters?sort=NAME_ASC` - Retrieves all characters sorted by name (`NAME_ASC` or `NAME_DESC`).
+    - `GET /characters?sort=STATUS_ASC` - Retrieves all characters sorted by status (`STATUS_ASC` or `STATUS_DESC`).
     - `GET /characters?name=Rick` - Retrieves all characters with a specific name.
-    - `GET /characters?status=Alive` - Retrieves all characters with a specific status (`alive`, `dead`, or `unknown`).
+    - `GET /characters?status=ALIVE` - Retrieves all characters with a specific status (`ALIVE`, `DEAD`, or `UNKNOW`).
     - `GET /characters?species=Human` - Retrieves all characters with a specific species.
     - `GET /characters?type=Clone` - Retrieves all characters with a specific type.
-    - `GET /characters?gender=Male` - Retrieves all characters with a specific gender (`female`, `male`, `genderless`, or `unknown`).
+    - `GET /characters?gender=Male` - Retrieves all characters with a specific gender (`FEMALE`, `MALE`, `GENDERLESS`, or `UNKNOW`).
     - `GET /characters/{id}` - Retrieves a specific character by ID.
     - `GET /characters/avatar/{id}.jpeg` - Retrieves the avatar of a specific character by ID.
 - **Episodes**
     - `GET /episodes` - Retrieves all episodes from the first page.
     - `GET /episodes?page=2` - Retrieves all episodes from a specific page.
+    - `GET /episode?name=Rick` - Retrieves all episode with a specific name.
+    - `GET /episode?episode=S01E01` - Retrieves all episode with a specific episode code. (expected = `SXXEXX`).
+    - `GET /episodes?sort=NAME_ASC` - Retrieves all episodes sorted by name (`NAME_ASC` or `NAME_DESC`).
+    - `GET /episodes?sort=EPISODE_CODE` - Retrieves all episodes sorted by status (`EPISODE_CODE` or `EPISODE_CODE_DESC`).
     - `GET /episodes/{id}` - Retrieves a specific episode by ID.
 - **Locations**
     - `GET /locations` - Retrieves all locations from the first page.
     - `GET /locations?page=2` - Retrieves all locations from a specific page.
+    - `GET /locations?name=Rick` - Retrieves all locations with a specific name.
+    - `GET /locations?type=planet` - Retrieves all locations with a specific type.
+    - `GET /locations?dimension=c-137` - Retrieves all locations with a specific dimension.
+    - `GET /episodes?sort=NAME_ASC` - Retrieves all episodes sorted by name (`NAME_ASC` or `NAME_DESC`).
+    - `GET /episodes?sort=TYPE_ASC` - Retrieves all episodes sorted by status (`TYPE_ASC` or `TYPE_DESC`).
+    - `GET /episodes?sort=DIMENSION_ASC` - Retrieves all episodes sorted by name (`DIMENSION_ASC` or `DIMENSION_DESC`).
+    - `GET /episodes?sort=TYPE_ASC` - Retrieves all episodes sorted by status (`TYPE_ASC` or `TYPE_DESC`).
     - `GET /locations/{id}` - Retrieves a specific location by ID.
 - **Users**
     - `POST /users` - Registers a user by ID.
@@ -113,7 +124,7 @@ java -jar target/rickMorty-0.0.1-SNAPSHOT.jar
     - Parameters:
       - `page` (optional, default: 0) - The page number to retrieve.
       - `size` (optional, default: 10) - The number of items per page.
-      - `sort` (optional, default: "id,asc") - Sorting criteria in the format: property,(asc|desc).
+      - `sort` (optional, default: "asc") - sort asc/desc based on id.
   - `DELETE /favorites/{userId}/{favoriteId}` - Removes a specific favorite for a user.
   - `DELETE /favorites/{userId}` - Removes all favorites for a user.
 
