@@ -36,10 +36,12 @@ public class UserService {
     }
 
     public void updateUser(Long id, UserDto userDto, BindingResult result) {
-        validateFields(userDto, result);
+        if (id == null || id < 1) throw new InvalidIdException();
 
         Optional<UserModel> optionalUser = userRepository.findByIdAndActive(id, 1);
         if (!optionalUser.isPresent()) throw new UserNotFoundException();
+
+        validateFields(userDto, result);
 
         UserModel user = optionalUser.get();
         user.setName(userDto.name());
@@ -52,7 +54,7 @@ public class UserService {
 
     public void patchUser(Long id, UserPatchDto userPatchDto, BindingResult result) {
 
-        if (id == 0 || id == null) throw new InvalidIdException();
+        if (id == null || id < 1) throw new InvalidIdException();
 
         Optional<UserModel> optionalUser = userRepository.findByIdAndActive(id, 1);
         if (!optionalUser.isPresent()) throw new UserNotFoundException();
@@ -77,11 +79,12 @@ public class UserService {
             isUpdated = true;
         }
 
-        if (!isUpdated) throw new NothingPatchException("Nenhum dado foi alterado. Porque os campos fornecidos são iguais aos atuais.");
-        validateFieldsPatch(userPatchDto, result);
+        if (isUpdated) {
+            validateFieldsPatch(userPatchDto, result);
 
-        user.setDate_update(LocalDateTime.now());
-        userRepository.save(user);
+            user.setDate_update(LocalDateTime.now());
+            userRepository.save(user);
+        }
     }
 
     public void deleteUser(Long id) {
