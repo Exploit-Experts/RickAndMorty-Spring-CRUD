@@ -11,6 +11,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
 
 @RestController
 @RequestMapping("/api/v1/characters")
@@ -19,6 +23,14 @@ public class CharacterController {
     @Autowired
     private CharacterService characterService;
 
+    @Operation(summary = "Get all characters",
+            description = "Get all characters from the Rick and Morty series",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Characters found"),
+                    @ApiResponse(responseCode = "404", description = "Characters not found", 
+                                 content = @Content(mediaType = "application/json", 
+                                                    examples = @ExampleObject(value = "{\"message\": \"Não encontrado\"}"))),
+            })
     @GetMapping
     public ResponseEntity<ApiResponseDto<CharacterDto>> getAllCharacters(
         @RequestParam(required = false) Integer page,
@@ -32,12 +44,29 @@ public class CharacterController {
         return ResponseEntity.ok(characters);
     }
 
+    @Operation(summary = "Get character by ID",
+            description = "Get a specific character by its ID",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Character found"),
+                    @ApiResponse(responseCode = "404", description = "Character not found", 
+                                 content = @Content(mediaType = "application/json", 
+                                                    examples = @ExampleObject(value = "{\"message\": \"Character não encontrado para o ID\"}"))),
+            })
     @GetMapping("/{id}")
     public ResponseEntity<CharacterDto> getCharacterById(@PathVariable Long id) {
         CharacterDto character = characterService.findACharacterById(id);
         return new ResponseEntity<>(character, HttpStatus.OK);
     }
 
+    @Operation(summary = "Get character avatar",
+            description = "Get the avatar of a specific character by its ID",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Avatar found", 
+                                 content = @Content(mediaType = "image/jpeg")),
+                    @ApiResponse(responseCode = "404", description = "Avatar not found", 
+                                 content = @Content(mediaType = "application/json", 
+                                                    examples = @ExampleObject(value = "{\"message\": \"Character não encontrado para o ID\"}"))),
+            })
     @GetMapping("/avatar/{id}.jpeg")
     public ResponseEntity<byte[]> getCharacterAvatar(@PathVariable Long id) {
         return characterService.findCharacterAvatar(id);
