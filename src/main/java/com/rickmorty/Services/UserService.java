@@ -65,7 +65,7 @@ public class UserService {
         if (userPatchDto.surname() != null) {
             user.setSurname(userPatchDto.surname());
         }
-        if (userPatchDto.email() != null) {
+        if (!userPatchDto.email().isBlank()) {
             user.setEmail(userPatchDto.email());
         }
         if (userPatchDto.password() != null) {
@@ -99,7 +99,7 @@ public class UserService {
     }
 
     public void validateFieldsPatch(UserPatchDto userPatchDto, BindingResult result) {
-        if(userPatchDto.email() != null) {
+        if (!userPatchDto.email().isBlank()) {
             Optional<UserModel> checkEmailExists = userRepository.findByEmail(userPatchDto.email());
             if (checkEmailExists.isPresent()) throw new ConflictException("Email já cadastrado");
         }
