@@ -34,7 +34,7 @@ public class LocationService {
     }
 
     public ApiResponseDto<LocationDto> findAllLocations(Integer page, String name, String type, String dimension, SortLocation sort) {
-        if (page != null && page < 1) throw new InvalidParameterException("Page precisa ser um número positivo.");
+        if (page != null && page < 1) throw new InvalidParameterException("Parâmetro page incorreto, deve ser um numero inteiro maior ou igual a 1");
         try {
             StringBuilder urlBuilder = new StringBuilder(config.getApiBaseUrl() + "/location?");
             if (page != null) urlBuilder.append("page=").append(page).append("&");

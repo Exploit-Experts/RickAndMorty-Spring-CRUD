@@ -38,7 +38,7 @@ public class EpisodeService {
 
         try {
 
-            if (page != null && page <= 0) throw new InvalidParameterException("parametro page incorreto, deve ser um numero inteiro positivo");
+            if (page != null && page <= 0) throw new InvalidParameterException("Parâmetro page incorreto, deve ser um numero inteiro maior ou igual a 1");
 
             StringBuilder urlBuilder = new StringBuilder(config.getApiBaseUrl() + "/episode?");
             if (page != null) urlBuilder.append("page=").append(page).append("&");

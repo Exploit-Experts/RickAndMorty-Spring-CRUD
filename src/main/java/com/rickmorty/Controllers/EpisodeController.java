@@ -28,8 +28,13 @@ public class EpisodeController {
                                  content = @Content(mediaType = "application/json", 
                                                     examples = @ExampleObject(value = "{\"message\": \"Não encontrado\"}"))),
                     @ApiResponse(responseCode = "400", description = "Invalid parameter", 
-                                 content = @Content(mediaType = "application/json", 
-                                                    examples = @ExampleObject(value = "{\"message\": \"Parâmetro [] inválido\"}"))),
+                                 content = @Content(mediaType = "application/json", examples = {
+                                     @ExampleObject(name= "Invalid Page parameter", value = "{\"message\": \"Parâmetro page inválido\"}"),
+                                     @ExampleObject(name= "Invalid Page", value = "{\"message\": \"Parâmetro page incorreto, deve ser um numero inteiro maior ou igual a 1\"}"),
+                                     @ExampleObject(name= "Invalid Name", value = "{\"message\": \"Parâmetro name inválido\"}"),
+                                     @ExampleObject(name= "Invalid Episode", value = "{\"message\": \"Parâmetro episode inválido\"}"),
+                                     @ExampleObject(name= "Invalid Sort", value = "{\"message\": \"Parâmetro sort inválido\"}")
+                                 }))
             })
     @GetMapping
     public ResponseEntity<ApiResponseDto<EpisodeDto>> getAllEpisodes(
@@ -50,7 +55,10 @@ public class EpisodeController {
                                                     examples = @ExampleObject(value = "{\"message\": \"Episode não encontrado para o ID\"}"))),
                     @ApiResponse(responseCode = "400", description = "Invalid episode ID", 
                                  content = @Content(mediaType = "application/json", 
-                                                    examples = @ExampleObject(value = "{\"message\": \"Parâmetro id inválido\"}")))
+                                                    examples = {
+                                                        @ExampleObject(name="InvalidParameter", value = "{\"message\": \"Parâmetro id inválido\"}"),
+                                                        @ExampleObject(name="InvalidID", value = "{\"message\": \"ID enviado inválido, o id deve ser um número válido e positivo\"}")
+                                                    }))
             })
     @GetMapping("/{id}")
     public ResponseEntity<EpisodeDto> getEpisodeById(@PathVariable Long id) {

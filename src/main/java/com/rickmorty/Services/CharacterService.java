@@ -38,7 +38,7 @@ public class CharacterService {
     Config config;
 
     public ApiResponseDto<CharacterDto> findAllCharacters(Integer page, String name, LifeStatus status, Species species, String type, Gender gender, SortOrder sort) {
-        if (page != null && page < 0) throw new InvalidParameterException("Page precisa ser um número positivo.");
+        if (page != null && page < 0) throw new InvalidParameterException("Parâmetro page incorreto, deve ser um numero inteiro maior ou igual a 1");
 
         try {
             HttpClient client = HttpClient.newHttpClient();
