@@ -88,6 +88,9 @@ public class FavoriteService {
         Sort sortOrder = Sort.by(direction, sortField);
         Pageable pageable = PageRequest.of(page, size, sortOrder);
 
+        Optional<UserModel> user = userRepository.findByIdAndActive(userId, 1);
+        if (user.isEmpty()) throw new UserNotFoundException();
+
         Page<FavoriteModel> favoritesPage = favoriteRepository.findFavoriteByUserId(userId, pageable);
         if (favoritesPage.isEmpty()) throw new NotFoundException();
 
@@ -102,7 +105,8 @@ public class FavoriteService {
 
     @Transactional
     public void removeFavorite(Long userId, Long favoriteId) {
-        if (userId == null || userId < 1 || favoriteId == null || favoriteId < 1) throw new InvalidParameterException("Parâmetro useId e/ou favoriteId inválido");
+        if (userId == null || userId <= 0) throw new InvalidParameterException("Parâmetro userId inválido. Deve ser um número positivo maior que zero");
+        if (favoriteId == null || favoriteId <= 0) throw new InvalidParameterException("Parâmetro favoriteId inválido. Deve ser um número positivo maior que zero");
 
         Optional<UserModel> user = userRepository.findByIdAndActive(userId, 1);
         if (user.isEmpty()) throw new UserNotFoundException();
@@ -125,8 +129,8 @@ public class FavoriteService {
     }
 
     private void validateFavorite(FavoriteDto favoriteDto, BindingResult result) {
-        if (favoriteDto.userId() == null || favoriteDto.userId() <= 0 ||
-                favoriteDto.apiId() == null || favoriteDto.apiId() <= 0) throw new InvalidIdException();
+        if (favoriteDto.userId() == null || favoriteDto.userId() <= 0) throw new InvalidParameterException("Parâmetro userId inválido. Deve ser um número positivo maior que zero");
+        if (favoriteDto.apiId() == null || favoriteDto.apiId() <= 0) throw new InvalidParameterException("Parâmetro apiId inválido. Deve ser um número positivo maior que zero");
 
         switch (favoriteDto.itemType().name().toLowerCase()){
             case "episode":
