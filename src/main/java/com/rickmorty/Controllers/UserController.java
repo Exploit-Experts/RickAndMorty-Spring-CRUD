@@ -52,7 +52,7 @@ public class UserController {
 
                                     content = @Content(mediaType = "application/json",
                                     examples = {
-                                            @ExampleObject(name = "Zero ID sent as a parameter", value = "{\"message\": \"ID enviado inválido, o id deve ser um número válido e positivo\"}"),
+                                            @ExampleObject(name = "Zero ID sent as a parameter", value = "{\"message\": \"ID enviado inválido, o id deve ser um numero inteiro maior ou igual a 1\"}"),
                                             @ExampleObject(name = "Invalid parameter", value = "{\"message\": \"Parâmetro id inválido\"}"),
                                             @ExampleObject(name = "Invalid name", value = "{\"errors\": [\"O nome é obrigatório\", \"O nome deve ter entre 3 e 50 caracteres.\"]}"),
                                             @ExampleObject(name = "Invalid surname", value = "{\"errors\": [\"O sobrenome é obrigatório\", \"O sobrenome deve ter entre 3 e 50 caracteres.\"]}"),
