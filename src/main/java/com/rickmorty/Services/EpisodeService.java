@@ -32,9 +32,7 @@ public class EpisodeService {
 
     public ApiResponseDto<EpisodeDto> findAllEpisodes(Integer page, String name, String episode, SortEpisode sort) {
 
-        if (episode != null && !Pattern.matches("^S\\d{2}(E\\d{2})?$", episode.toUpperCase())) {
-            throw new InvalidParameterException("O cod do episode não está no formato correto. Esperado: SXXEXX");
-        }
+        if (episode != null && !Pattern.matches("^S\\d{2}(E\\d{2})?$", episode.toUpperCase())) throw new InvalidParameterException("Parâmetro episode não está no formato correto. Esperado: SXXEXX");
 
         try {
 

@@ -33,6 +33,7 @@ public class EpisodeController {
                                      @ExampleObject(name= "Invalid Page", value = "{\"message\": \"Parâmetro page incorreto, deve ser um numero inteiro maior ou igual a 1\"}"),
                                      @ExampleObject(name= "Invalid Name", value = "{\"message\": \"Parâmetro name inválido\"}"),
                                      @ExampleObject(name= "Invalid Episode", value = "{\"message\": \"Parâmetro episode inválido\"}"),
+                                     @ExampleObject(name= "Invalid Episode formart", value = "{\"message\": \"Parâmetro episode não está no formato correto. Esperado: SXXEXX\"}"),
                                      @ExampleObject(name= "Invalid Sort", value = "{\"message\": \"Parâmetro sort inválido\"}")
                                  }))
             })
