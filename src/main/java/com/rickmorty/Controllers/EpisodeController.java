@@ -27,6 +27,9 @@ public class EpisodeController {
                     @ApiResponse(responseCode = "404", description = "Episodes not found", 
                                  content = @Content(mediaType = "application/json", 
                                                     examples = @ExampleObject(value = "{\"message\": \"Não encontrado\"}"))),
+                    @ApiResponse(responseCode = "400", description = "Invalid parameter", 
+                                 content = @Content(mediaType = "application/json", 
+                                                    examples = @ExampleObject(value = "{\"message\": \"Parâmetro [] inválido\"}"))),
             })
     @GetMapping
     public ResponseEntity<ApiResponseDto<EpisodeDto>> getAllEpisodes(
@@ -45,6 +48,9 @@ public class EpisodeController {
                     @ApiResponse(responseCode = "404", description = "Episode not found", 
                                  content = @Content(mediaType = "application/json", 
                                                     examples = @ExampleObject(value = "{\"message\": \"Episode não encontrado para o ID\"}"))),
+                    @ApiResponse(responseCode = "400", description = "Invalid episode ID", 
+                                 content = @Content(mediaType = "application/json", 
+                                                    examples = @ExampleObject(value = "{\"message\": \"Parâmetro id inválido\"}")))
             })
     @GetMapping("/{id}")
     public ResponseEntity<EpisodeDto> getEpisodeById(@PathVariable Long id) {

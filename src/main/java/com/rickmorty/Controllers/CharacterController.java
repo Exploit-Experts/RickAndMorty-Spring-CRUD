@@ -30,6 +30,9 @@ public class CharacterController {
                     @ApiResponse(responseCode = "404", description = "Characters not found", 
                                  content = @Content(mediaType = "application/json", 
                                                     examples = @ExampleObject(value = "{\"message\": \"Não encontrado\"}"))),
+                        @ApiResponse(responseCode = "400", description = "Invalid parameter",
+                                 content = @Content(mediaType = "application/json", 
+                                                    examples = @ExampleObject(value = "{\"message\": \"Parâmetro [] inválido\"}"))),
             })
     @GetMapping
     public ResponseEntity<ApiResponseDto<CharacterDto>> getAllCharacters(
@@ -51,6 +54,9 @@ public class CharacterController {
                     @ApiResponse(responseCode = "404", description = "Character not found", 
                                  content = @Content(mediaType = "application/json", 
                                                     examples = @ExampleObject(value = "{\"message\": \"Character não encontrado para o ID\"}"))),
+                        @ApiResponse(responseCode = "400", description = "Invalid ID supplied", 
+                                 content = @Content(mediaType = "application/json", 
+                                                    examples = @ExampleObject(value = "{\"message\": \"Parâmetro id inválido\"}"))),
             })
     @GetMapping("/{id}")
     public ResponseEntity<CharacterDto> getCharacterById(@PathVariable Long id) {
@@ -66,6 +72,9 @@ public class CharacterController {
                     @ApiResponse(responseCode = "404", description = "Avatar not found", 
                                  content = @Content(mediaType = "application/json", 
                                                     examples = @ExampleObject(value = "{\"message\": \"Character não encontrado para o ID\"}"))),
+                        @ApiResponse(responseCode = "400", description = "Invalid ID supplied",
+                                 content = @Content(mediaType = "application/json", 
+                                                    examples = @ExampleObject(value = "{\"message\": \"Parâmetro id inválido\"}"))),
             })
     @GetMapping("/avatar/{id}.jpeg")
     public ResponseEntity<byte[]> getCharacterAvatar(@PathVariable Long id) {

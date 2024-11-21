@@ -29,6 +29,9 @@ public class LocationController {
                     @ApiResponse(responseCode = "404", description = "Locations not found", 
                                  content = @Content(mediaType = "application/json", 
                                                     examples = @ExampleObject(value = "{\"message\": \"Não encontrado\"}"))),
+                    @ApiResponse(responseCode = "400", description = "Invalid parameter",
+                                 content = @Content(mediaType = "application/json", 
+                                                    examples = @ExampleObject(value = "{\"message\": \"Parâmetro [] inválido\"}"))),
             })
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
@@ -49,6 +52,9 @@ public class LocationController {
                     @ApiResponse(responseCode = "404", description = "Location not found", 
                                  content = @Content(mediaType = "application/json", 
                                                     examples = @ExampleObject(value = "{\"message\": \"Localizações não encontradas\"}"))),
+                    @ApiResponse(responseCode = "400", description = "Invalid ID supplied",
+                                 content = @Content(mediaType = "application/json", 
+                                                    examples = @ExampleObject(value = "{\"message\": \"Parâmetro id inválido\"}"))),
             })
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
