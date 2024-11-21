@@ -55,6 +55,8 @@ public class UserService {
     public void patchUser(Long id, UserPatchDto userPatchDto, BindingResult result) {
         validateFieldsPatch(userPatchDto, result);
 
+        if (id== 0 || id == null) throw new InvalidIdException();
+
         Optional<UserModel> optionalUser = userRepository.findByIdAndActive(id, 1);
         if (!optionalUser.isPresent()) throw new UserNotFoundException();
 
