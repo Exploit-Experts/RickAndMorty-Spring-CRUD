@@ -32,13 +32,11 @@ public class EpisodeService {
 
     public ApiResponseDto<EpisodeDto> findAllEpisodes(Integer page, String name, String episode, SortEpisode sort) {
 
-        if (episode != null && !Pattern.matches("^S\\d{2}(E\\d{2})?$", episode.toUpperCase())) {
-            throw new InvalidParameterException("O cod do episode não está no formato correto. Esperado: SXXEXX");
-        }
+        if (episode != null && !Pattern.matches("^S\\d{2}(E\\d{2})?$", episode.toUpperCase())) throw new InvalidParameterException("Parâmetro episode não está no formato correto. Esperado: SXXEXX");
 
         try {
 
-            if (page != null && page <= 0) throw new InvalidParameterException("parametro page incorreto, deve ser um numero inteiro positivo");
+            if (page != null && page <= 0) throw new InvalidParameterException("Parâmetro page incorreto, deve ser um numero inteiro maior ou igual a 1");
 
             StringBuilder urlBuilder = new StringBuilder(config.getApiBaseUrl() + "/episode?");
             if (page != null) urlBuilder.append("page=").append(page).append("&");

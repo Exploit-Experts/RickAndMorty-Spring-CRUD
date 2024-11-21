@@ -4,10 +4,7 @@ import com.rickmorty.DTO.UserDto;
 import com.rickmorty.DTO.UserPatchDto;
 import com.rickmorty.Models.UserModel;
 import com.rickmorty.Repository.UserRepository;
-import com.rickmorty.exceptions.UserNotFoundException;
-import com.rickmorty.exceptions.ValidationErrorException;
-import com.rickmorty.exceptions.ConflictException;
-import com.rickmorty.exceptions.InvalidIdException;
+import com.rickmorty.exceptions.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,6 +13,7 @@ import org.springframework.validation.FieldError;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -53,7 +51,8 @@ public class UserService {
     }
 
     public void patchUser(Long id, UserPatchDto userPatchDto, BindingResult result) {
-        validateFieldsPatch(userPatchDto, result);
+
+        if (id == 0 || id == null) throw new InvalidIdException();
 
         Optional<UserModel> optionalUser = userRepository.findByIdAndActive(id, 1);
         if (!optionalUser.isPresent()) throw new UserNotFoundException();
@@ -61,27 +60,28 @@ public class UserService {
         UserModel user = optionalUser.get();
         boolean isUpdated = false;
 
-        if (userPatchDto.name() != null) {
+        if (userPatchDto.name() != null && !Objects.equals(user.getName(), userPatchDto.name())) {
             user.setName(userPatchDto.name());
             isUpdated = true;
         }
-        if (userPatchDto.surname() != null) {
+        if (userPatchDto.surname() != null && !Objects.equals(user.getSurname(), userPatchDto.surname())) {
             user.setSurname(userPatchDto.surname());
             isUpdated = true;
         }
-        if (userPatchDto.email() != null) {
+        if (userPatchDto.email() != null && !Objects.equals(user.getEmail(), userPatchDto.email())) {
             user.setEmail(userPatchDto.email());
             isUpdated = true;
         }
-        if (userPatchDto.password() != null) {
+        if (userPatchDto.password() != null && !Objects.equals(user.getPassword(), userPatchDto.password())) {
             user.setPassword(userPatchDto.password());
             isUpdated = true;
         }
 
-        if (isUpdated) {
-            user.setDate_update(LocalDateTime.now());
-            userRepository.save(user);
-        }
+        if (!isUpdated) throw new NothingPatchException("Nenhum dado foi alterado. Porque os campos fornecidos são iguais aos atuais.");
+        validateFieldsPatch(userPatchDto, result);
+
+        user.setDate_update(LocalDateTime.now());
+        userRepository.save(user);
     }
 
     public void deleteUser(Long id) {

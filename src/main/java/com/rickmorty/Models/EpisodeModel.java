@@ -1,9 +1,6 @@
 
 package com.rickmorty.Models;
 
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-
 import java.util.List;
 
 public class EpisodeModel {
