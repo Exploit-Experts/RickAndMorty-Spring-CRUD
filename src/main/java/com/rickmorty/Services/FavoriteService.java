@@ -1,6 +1,5 @@
 package com.rickmorty.Services;
 import com.rickmorty.DTO.FavoriteResponseDto;
-import com.rickmorty.DTO.UserDto;
 import com.rickmorty.Models.FavoriteModel;
 import com.rickmorty.Models.UserModel;
 import com.rickmorty.Repository.FavoriteRepository;
