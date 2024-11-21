@@ -24,7 +24,7 @@ public class UserService {
     private UserRepository userRepository;
 
     public void saveUser(UserDto userDto, BindingResult result) {
-        validateFields(userDto, result);
+        validateFieldsWithCheckEmail(userDto, result);
 
         UserModel userModel = new UserModel();
         userModel.setName(userDto.name());
@@ -41,9 +41,15 @@ public class UserService {
         Optional<UserModel> optionalUser = userRepository.findByIdAndActive(id, 1);
         if (!optionalUser.isPresent()) throw new UserNotFoundException();
 
-        validateFields(userDto, result);
-
         UserModel user = optionalUser.get();
+        validateFields(result);
+
+        if (!Objects.equals(userDto.email(), optionalUser.get().getEmail())) {
+            Optional<UserModel> checkEmailExists = userRepository.findByEmail(userDto.email());
+            if (checkEmailExists.isPresent()) throw new ConflictException("Email já cadastrado");
+            user.setEmail(userDto.email());
+        }
+
         user.setName(userDto.name());
         user.setSurname(userDto.surname());
         user.setEmail(userDto.email());
@@ -98,7 +104,16 @@ public class UserService {
         userRepository.save(userModel);
     }
 
-    public void validateFields(UserDto userDto, BindingResult result) {
+    public void validateFields(BindingResult result) {
+        if (result.hasErrors()) {
+            List<String> errors = result.getFieldErrors().stream()
+                    .map(FieldError::getDefaultMessage)
+                    .collect(Collectors.toList());
+            throw new ValidationErrorException(errors);
+        }
+    }
+
+    public void validateFieldsWithCheckEmail(UserDto userDto, BindingResult result) {
         Optional<UserModel> checkEmailExists = userRepository.findByEmail(userDto.email());
         if (checkEmailExists.isPresent()) throw new ConflictException("Email já cadastrado");
 
