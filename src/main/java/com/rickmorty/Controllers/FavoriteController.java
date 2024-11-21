@@ -2,6 +2,7 @@ package com.rickmorty.Controllers;
 
 import com.rickmorty.DTO.FavoriteResponseDto;
 import com.rickmorty.Services.FavoriteService;
+import com.rickmorty.enums.SortFavorite;
 import org.springframework.data.domain.Page;
 import jakarta.validation.Valid;
 import org.springframework.validation.BindingResult;
@@ -32,10 +33,9 @@ public class FavoriteController {
     public ResponseEntity<Page<FavoriteResponseDto>> getAllFavorites(
             @PathVariable Long userId,
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size,
-            @RequestParam(defaultValue = "id,asc") String[] sort) {
+            @RequestParam(defaultValue = "ASC") SortFavorite sort) {
 
-        Page<FavoriteResponseDto> favorites = favoriteService.getAllFavorites(userId, page, size, sort);
+        Page<FavoriteResponseDto> favorites = favoriteService.getAllFavorites(userId, page, sort);
 
         return ResponseEntity.ok(favorites);
     }
