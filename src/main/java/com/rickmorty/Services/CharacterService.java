@@ -14,6 +14,7 @@ import com.rickmorty.exceptions.CharacterNotFoundException;
 import com.rickmorty.exceptions.InvalidIdException;
 import com.rickmorty.exceptions.InvalidParameterException;
 import com.rickmorty.exceptions.NotFoundException;
+import com.rickmorty.interfaces.CharacterServiceInterface;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -32,11 +33,12 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Service
-public class CharacterService {
+public class CharacterService implements CharacterServiceInterface {
 
     @Autowired
     Config config;
 
+    @Override
     public ApiResponseDto<CharacterDto> findAllCharacters(Integer page, String name, LifeStatus status, Species species, String type, Gender gender, SortOrder sort) {
         if (page != null && page < 0) throw new InvalidParameterException("Parâmetro page incorreto, deve ser um numero inteiro maior ou igual a 1");
 
@@ -77,6 +79,56 @@ public class CharacterService {
         }
     }
 
+    @Override
+    public CharacterDto findACharacterById(Long id) {
+        if (id == null || id < 1) throw new InvalidIdException();
+        try {
+            HttpClient client = HttpClient.newHttpClient();
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(config.getApiBaseUrl() + "/character/" + id))
+                    .build();
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            ObjectMapper objectMapper = new ObjectMapper();
+
+            if (response.statusCode() == 404) throw new CharacterNotFoundException();
+
+            CharacterDto character = objectMapper.readValue(response.body(), CharacterDto.class);
+            return rewriteCharacterDto(character);
+        } catch (CharacterNotFoundException e) {
+            throw new CharacterNotFoundException();
+        } catch (Exception e) {
+            log.error("Erro ao buscar personagem por ID: " + e.getMessage(), e);
+        }
+        return null;
+    }
+
+    @Override
+    public ResponseEntity<byte[]> findCharacterAvatar(Long id) {
+        if (id == null || id < 1) throw new InvalidIdException();
+        try {
+            HttpClient client = HttpClient.newHttpClient();
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(config.getApiBaseUrl() + "/character/" + id))
+                    .build();
+
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            if (response.statusCode() == 404) throw new CharacterNotFoundException();
+            ObjectMapper objectMapper = new ObjectMapper();
+            String imageUrl = objectMapper.readTree(response.body()).get("image").asText();
+            byte[] imageBytes = downloadImage(URI.create(imageUrl).toURL());
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.set("Content-Type", "image/jpeg");
+
+            return new ResponseEntity<>(imageBytes, headers, HttpStatus.OK);
+        }catch (CharacterNotFoundException e) {
+            throw new CharacterNotFoundException();
+        }catch (Exception e) {
+            log.error("Erro ao buscar avatar do personagem: " + e.getMessage(), e);
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
     private ApiResponseDto<CharacterDto> rewriteApiResponse(ApiResponseDto<CharacterDto> apiResponseDto, String sort) {
         InfoDto updatedInfo = rewriteInfoDto(apiResponseDto.info());
 
@@ -104,54 +156,6 @@ public class CharacterService {
             default:
                 return 0;
         }
-    }
-
-    public ResponseEntity<byte[]> findCharacterAvatar(Long id) {
-        if (id == null || id < 1) throw new InvalidIdException();
-        try {
-            HttpClient client = HttpClient.newHttpClient();
-            HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create(config.getApiBaseUrl() + "/character/" + id))
-                    .build();
-
-            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-            if (response.statusCode() == 404) throw new CharacterNotFoundException();
-            ObjectMapper objectMapper = new ObjectMapper();
-            String imageUrl = objectMapper.readTree(response.body()).get("image").asText();
-            byte[] imageBytes = downloadImage(URI.create(imageUrl).toURL());
-
-            HttpHeaders headers = new HttpHeaders();
-            headers.set("Content-Type", "image/jpeg");
-
-            return new ResponseEntity<>(imageBytes, headers, HttpStatus.OK);
-        }catch (CharacterNotFoundException e) {
-            throw new CharacterNotFoundException();
-        }catch (Exception e) {
-            log.error("Erro ao buscar avatar do personagem: " + e.getMessage(), e);
-        }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-    }
-
-    public CharacterDto findACharacterById(Long id) {
-        if (id == null || id < 1) throw new InvalidIdException();
-        try {
-            HttpClient client = HttpClient.newHttpClient();
-            HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create(config.getApiBaseUrl() + "/character/" + id))
-                    .build();
-            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-            ObjectMapper objectMapper = new ObjectMapper();
-
-            if (response.statusCode() == 404) throw new CharacterNotFoundException();
-
-            CharacterDto character = objectMapper.readValue(response.body(), CharacterDto.class);
-            return rewriteCharacterDto(character);
-        } catch (CharacterNotFoundException e) {
-            throw new CharacterNotFoundException();
-        } catch (Exception e) {
-            log.error("Erro ao buscar personagem por ID: " + e.getMessage(), e);
-        }
-        return null;
     }
 
     private InfoDto rewriteInfoDto(InfoDto originalInfo) {
