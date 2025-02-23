@@ -7,7 +7,6 @@ public class CustomErrorResponse {
         this.message = message;
     }
 
-    // Getter e Setter
     public String getMessage() {
         return message;
     }
