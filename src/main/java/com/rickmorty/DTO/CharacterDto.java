@@ -13,5 +13,7 @@ public record CharacterDto(
         @JsonProperty("type") String type,
         @JsonProperty("gender") String gender,
         @JsonProperty("image") String image,
-        @JsonProperty("episode") List<String> episode
+        @JsonProperty("episode") List<String> episode,
+        @JsonProperty("location") LocationCharacterDto location
+
 ) {}

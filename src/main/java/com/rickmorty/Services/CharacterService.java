@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rickmorty.DTO.ApiResponseDto;
 import com.rickmorty.DTO.CharacterDto;
 import com.rickmorty.DTO.InfoDto;
+import com.rickmorty.DTO.LocationCharacterDto;
 import com.rickmorty.Utils.Config;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -143,6 +144,15 @@ public class CharacterService {
     }
 
     private CharacterDto rewriteCharacterDto(CharacterDto character) {
+        String baseUrl = config.getApiBaseUrl();
+        String localUrl = config.getLocalBaseUrl();
+
+        LocationCharacterDto characterLocation = character.location() != null
+                ? new LocationCharacterDto(
+                character.location().name(),
+                character.location().url().replace(baseUrl, localUrl).replace("/location", "/locations"))
+                : null;
+
         return new CharacterDto(
                 character.id(),
                 character.name(),
@@ -150,13 +160,15 @@ public class CharacterService {
                 character.species(),
                 character.type(),
                 character.gender(),
-                character.image().replace(config.getApiBaseUrl() +"/character/",
-                        config.getLocalBaseUrl() + "/characters/"),
+                character.image().replace(baseUrl, localUrl).replace("/character", "/characters"),
                 character.episode().stream()
-                        .map(episode -> episode.replace(config.getApiBaseUrl() + "/episode/",
-                                config.getLocalBaseUrl() + "/episodes/"))
-                        .collect(Collectors.toList()));
+                        .map(episode -> episode.replace(baseUrl, localUrl))
+                        .collect(Collectors.toList()),
+                characterLocation
+        );
     }
+
+
 
     private byte[] downloadImage(URL imageUrl) throws Exception {
         try (InputStream in = imageUrl.openStream()) {
