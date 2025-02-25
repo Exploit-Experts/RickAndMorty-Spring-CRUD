@@ -144,13 +144,10 @@ public class CharacterService {
     }
 
     private CharacterDto rewriteCharacterDto(CharacterDto character) {
-        String baseUrl = config.getApiBaseUrl();
-        String localUrl = config.getLocalBaseUrl();
-
         LocationCharacterDto characterLocation = character.location() != null
                 ? new LocationCharacterDto(
                 character.location().name(),
-                character.location().url().replace(baseUrl, localUrl).replace("/location", "/locations"))
+                character.location().url().replace(config.getApiBaseUrl() + "/location/", config.getLocalBaseUrl() + "/locations/"))
                 : null;
 
         return new CharacterDto(
@@ -160,9 +157,9 @@ public class CharacterService {
                 character.species(),
                 character.type(),
                 character.gender(),
-                character.image().replace(baseUrl, localUrl).replace("/character", "/characters"),
+                character.image().replace(config.getApiBaseUrl() + "/character/", config.getLocalBaseUrl() + "/characters/"),
                 character.episode().stream()
-                        .map(episode -> episode.replace(baseUrl, localUrl))
+                        .map(episode -> episode.replace(config.getApiBaseUrl() + "/episode/", config.getLocalBaseUrl() + "/episodes/"))
                         .collect(Collectors.toList()),
                 characterLocation
         );

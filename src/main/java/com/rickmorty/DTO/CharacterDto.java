@@ -3,6 +3,7 @@ package com.rickmorty.DTO;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.List;
+import com.rickmorty.DTO.CharacterDto;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public record CharacterDto(
